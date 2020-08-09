@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/FragmentMain">
+
+    <fragment
+        android:id="@+id/FragmentMain"
+        android:name="von.com.au.trackinternet.FragmentMain"
+        android:label="@string/fragment_main_label"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_Fragment_Main_to_Display_Outages"
+            app:destination="@id/FragmentDisplayOutages" />
+        <action
+            android:id="@+id/action_Fragment_Main_to_Display_Wifi_Scan"
+            app:destination="@id/FragmentDisplayWifiScan" />
+    </fragment>
+    <fragment
+        android:id="@+id/FragmentDisplayOutages"
+        android:name="von.com.au.trackinternet.FragmentDisplayOutages"
+        android:label="@string/fragment_display_outages"
+        tools:layout="@layout/fragment_display_outages">
+
+        <action
+            android:id="@+id/action_Fragment_Outages_To_Main"
+            app:destination="@id/FragmentMain" />
+        <argument
+            android:name="myArg"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/FragmentDisplayWifiScan"
+        android:name="von.com.au.trackinternet.FragmentDisplayWifiScan"
+        android:label="@string/fragment_display_wifi_scan"
+        tools:layout="@layout/fragment_display_wifi_scan">
+
+        <action
+            android:id="@+id/action_Fragment_Wifi_Scan_To_Main"
+            app:destination="@id/FragmentMain" />
+        <argument
+            android:name="myArg"
+            app:argType="integer" />
+    </fragment>
+</navigation>

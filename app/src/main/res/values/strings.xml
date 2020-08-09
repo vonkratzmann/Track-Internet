@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">Track Internet</string>
+    <string name="scan_wifi">Scan Wifi</string>
+    <string name="previous">Previous</string>
+    <string name="app_stopping">stopping</string>
+
+
+    <!-- menu strings -->
+    <string name="menu_quit_stop_recording">Quit (stop recording)?</string>
+    <string name="menu_quit_keep_recording">Quit (keep recording?</string>
+
+    <!-- Strings used in fragments for navigation -->
+    <string name="fragment_main_label">Fragment Main</string>
+    <string name="fragment_display_outages">Fragment Display Outages</string>
+    <string name="fragment_display_wifi_scan">Fragment Display Wifi Scan</string>
+
+    <!-- Shared Preference strings -->
+    <string name="pref_key_log_file">Log file</string>
+    <string name="pref_key_log_file_default">""</string>
+    <string name="pref_key_email_default">""</string>
+    <string name="pref_key_email">pref email</string>
+
+    <!-- Log file strings -->
+    <string name="log_disconnected">Disconnected</string>
+    <string name="log_connected">Connected</string>
+    <string name="log_android_ver_header">Android_Ver</string>
+    <string name="log_no_wifi">Unknown</string>
+    <string name="log_date_header">Date</string>
+    <string name="log_time_header">Time</string>
+    <string name="log_ssid_header">SSID</string>
+    <string name="log_freq_header">Freq</string>
+    <string name="log_status_header">Status</string>
+
+
+    <!-- Notification Channel for foreground service -->
+    <string name="not_name">Check internet</string>
+    <string name="not_description_text">Record internet connectivity</string>
+
+    <!-- email strings -->
+    <string name="email_subject">Recordings of Internet Connectivity</string>
+
+    <!-- View strings -->
+    <string name="button_display_outages">Display outages</string>
+    <string name="button_email_outages">Email outages</string>
+    <string name="button_record_outages">Record outages</string>
+    <string name="button_stop_recording">Stop recording</string>
+
+    <string name="textview_enter_email_address_header">Email Address</string>
+    <string name="textview_enter_filename_header">Filename</string>
+
+    <string name="edittext_hint_enter_email">Enter email addr</string>
+    <string name="edittext_hint_enter_filename">Enter file name</string>
+
+    <!-- Debug strings -->
+    <string name="debug_started">Started</string>
+
+    <!-- Status and error strings -->
+    <!-- error messages are use when the app is forced to stop or unable to run -->
+    <string name="status_scanning">Scanning....</string>
+    <string name="status_network_unknown">Network wifi state unknown</string>
+    <string name="status_scan_success">Scan Success</string>
+    <string name="status_stop_header">"Recording stopped"</string>
+    <string name="status_start_header">"Recording started"</string>
+
+    <string name="error_invalid_email_address">Invalid email address</string>
+    <string name="error_wifi_disabled">wifi is disabled</string>
+    <string name="error_no_filename_entered">Please enter filename</string>
+    <string name="error_storage_not_accessible">Cannot access external storage</string>
+    <string name="error_max_records">Maximum number of records reached</string>
+    <string name="error_no_permission">Stopping as permission not approved</string>
+
+
+    <string name="dialog_file_exists">File Exists</string>
+    <string name="log_delete_file">Delete file before proceeding?</string>
+
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="cancel">@android:string/cancel</string>
+
+
+</resources>

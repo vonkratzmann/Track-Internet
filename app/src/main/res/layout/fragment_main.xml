@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="von.com.au.trackinternet.FragmentMain">
+
+    <TextView
+        android:id="@+id/textView_email_addr_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/screenBackground"
+        android:padding="4sp"
+        android:text="@string/textview_enter_email_address_header"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_filename_header"
+        app:layout_constraintRight_toLeftOf="@id/textView_filename_header"
+        app:layout_constraintStart_toStartOf="@+id/edittext_emailaddr" />
+
+    <TextView
+        android:id="@+id/textView_filename_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/screenBackground"
+        android:padding="4sp"
+        android:text="@string/textview_enter_filename_header"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_email_filename"
+        app:layout_constraintLeft_toRightOf="@+id/textView_email_addr_header"
+        app:layout_constraintStart_toStartOf="@+id/edittext_filename"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.78" />
+
+    <EditText
+        android:id="@+id/edittext_emailaddr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/edittext_hint_enter_email"
+        android:importantForAutofill="no"
+        android:inputType="none"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="16sp"
+        android:padding="8sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edittext_filename"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/edittext_filename" />
+
+    <EditText
+        android:id="@+id/edittext_filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/edittext_hint_enter_filename"
+        android:importantForAutofill="no"
+        android:inputType="textUri|text"
+        android:padding="8sp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_record_guidelines"
+        app:layout_constraintLeft_toRightOf="@id/edittext_emailaddr"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_email_filename" />
+
+    <Button
+        android:id="@+id/button_display_outages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/buttonBackground"
+        android:padding="4sp"
+        android:text="@string/button_display_outages"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_email_outages"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline_action_buttons" />
+
+    <Button
+        android:id="@+id/button_email_outages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textSize="14sp"
+        android:padding="4sp"
+        android:background="@color/buttonBackground"
+        android:text="@string/button_email_outages"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button_display_outages"
+        app:layout_constraintLeft_toRightOf="@id/button_display_outages"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/button_record_outages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@color/buttonBackground"
+        android:padding="4sp"
+        android:text="@string/button_record_outages"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_action_buttons"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_scan_wifi"
+        app:layout_constraintTop_toTopOf="@+id/guideline_record_guidelines" />
+
+    <Button
+        android:id="@+id/button_scan_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/buttonBackground"
+        android:padding="4sp"
+        android:text="@string/scan_wifi"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button_record_outages"
+        app:layout_constraintLeft_toRightOf="@+id/button_record_outages"
+        app:layout_constraintRight_toLeftOf="@+id/button_stop_recording" />
+
+    <Button
+        android:id="@+id/button_stop_recording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@color/buttonBackground"
+        android:padding="4sp"
+        android:text="@string/button_stop_recording"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button_record_outages"
+        app:layout_constraintLeft_toRightOf="@+id/button_scan_wifi"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_email_filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_action_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="454dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_record_guidelines"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.35" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
