@@ -172,7 +172,7 @@ class UtilsGeneral(private val mContext: Context?) {
      *
      */
     fun help(view: View) {
-        val imageView: ImageView = view.findViewById<ImageView>(R.id.imageView_help)
+        val imageView: ImageView = view.findViewById(R.id.imageView_help)
         val bitMap: Bitmap = BitmapFactory.decodeFile("boys")
         imageView.setImageBitmap(bitMap)
 

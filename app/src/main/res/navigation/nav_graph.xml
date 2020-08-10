@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/FragmentMain"
         android:name="von.com.au.trackinternet.FragmentMain"
-        android:label="@string/fragment_main_label"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_Fragment_Main_to_Display_Outages"
@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_Fragment_Main_to_Display_Wifi_Scan"
             app:destination="@id/FragmentDisplayWifiScan" />
-        <action
-            android:id="@+id/action_Fragment_Main_to_Help"
-            app:destination="@id/FragmentHelp" />
     </fragment>
     <fragment
         android:id="@+id/FragmentDisplayOutages"
@@ -27,9 +24,6 @@
         <action
             android:id="@+id/action_FragmentDisplayOutages_To_Main"
             app:destination="@id/FragmentMain" />
-        <action
-            android:id="@+id/action_FragmentDisplayOutages_to_Help"
-            app:destination="@id/FragmentHelp" />
     </fragment>
     <fragment
         android:id="@+id/FragmentDisplayWifiScan"
@@ -39,9 +33,6 @@
         <action
             android:id="@+id/action_Fragment_Wifi_Scan_To_Main"
             app:destination="@id/FragmentMain" />
-        <action
-            android:id="@+id/action_FragmentDisplayWifiScan_to_Help"
-            app:destination="@id/FragmentHelp" />
     </fragment>
     <fragment
         android:id="@+id/FragmentHelp"

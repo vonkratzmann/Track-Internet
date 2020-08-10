@@ -6,13 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
-import von.com.au.trackinternet.MyDebug.DEB_FUN_START
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import kotlinx.android.synthetic.main.activity_main.*
 import mysites.com.au.checkinternetconnection.R
+import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 
 /**
  *
@@ -84,14 +86,18 @@ import mysites.com.au.checkinternetconnection.R
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class MainActivity : AppCompatActivity() {
-    private val tag = javaClass.simpleName          //used for debugging in Logcat
-    private lateinit var gUtilsGeneral: UtilsGeneral       //used for simple utilities
-    private lateinit var gUtilsRecordOutages: UtilsRecordOutages   //holds record outages functions
+    private val tag = javaClass.simpleName                   //used for debugging in Logcat
+    private lateinit var gUtilsGeneral: UtilsGeneral                //hold simple utility functions
+    private lateinit var gUtilsRecordOutages: UtilsRecordOutages    //holds record outages functions
+    private lateinit var appBarConfiguration: AppBarConfiguration   //add navigation support to the action bar
 
     /**
      *  onCreate()
      *
      *  sets up a notification channel
+     *  set up navigation to work with action bar
+     *  so title in action bar changes when a fragment is loaded
+     *  instantiate utility classes
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         if (DEB_FUN_START) Log.d(tag, "onCreate(): " + getString(R.string.debug_started))
@@ -100,8 +106,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        val navController = findNavController(R.id.nav_host_fragment)
+        appBarConfiguration = AppBarConfiguration(navController.graph)
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
+
         gUtilsGeneral = UtilsGeneral(this)
         gUtilsRecordOutages = UtilsRecordOutages(this)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp()
+                || super.onSupportNavigateUp()
     }
 
     /**
@@ -153,6 +169,8 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_help -> {
                 //Navigate to FragmentDisplayOutages
                 //As not in fragment have to use R.id.nav_host_fragment in content_main.xml to find nav controller
+                //uses global navigation action to load help fragment,
+                // so no specific action for current fragment to help fragment
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_FragmentHelp)
                 true
             }
