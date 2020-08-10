@@ -1,12 +1,15 @@
 package von.com.au.trackinternet
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import mysites.com.au.checkinternetconnection.R
 import von.com.au.trackinternet.MyConstants.DELAY_KILL
@@ -163,5 +166,15 @@ class UtilsGeneral(private val mContext: Context?) {
             }
         if (MyDebug.DEB_REC_OUT) Log.d(tag, "dateTime: $dateTime")
         return dateTime
+    }
+
+    /**
+     *
+     */
+    fun help(view: View) {
+        val imageView: ImageView = view.findViewById<ImageView>(R.id.imageView_help)
+        val bitMap: Bitmap = BitmapFactory.decodeFile("boys")
+        imageView.setImageBitmap(bitMap)
+
     }
 }

@@ -15,31 +15,45 @@
         <action
             android:id="@+id/action_Fragment_Main_to_Display_Wifi_Scan"
             app:destination="@id/FragmentDisplayWifiScan" />
+        <action
+            android:id="@+id/action_Fragment_Main_to_Help"
+            app:destination="@id/FragmentHelp" />
     </fragment>
     <fragment
         android:id="@+id/FragmentDisplayOutages"
         android:name="von.com.au.trackinternet.FragmentDisplayOutages"
         android:label="@string/fragment_display_outages"
         tools:layout="@layout/fragment_display_outages">
-
         <action
-            android:id="@+id/action_Fragment_Outages_To_Main"
+            android:id="@+id/action_FragmentDisplayOutages_To_Main"
             app:destination="@id/FragmentMain" />
-        <argument
-            android:name="myArg"
-            app:argType="integer" />
+        <action
+            android:id="@+id/action_FragmentDisplayOutages_to_Help"
+            app:destination="@id/FragmentHelp" />
     </fragment>
     <fragment
         android:id="@+id/FragmentDisplayWifiScan"
         android:name="von.com.au.trackinternet.FragmentDisplayWifiScan"
         android:label="@string/fragment_display_wifi_scan"
         tools:layout="@layout/fragment_display_wifi_scan">
-
         <action
             android:id="@+id/action_Fragment_Wifi_Scan_To_Main"
             app:destination="@id/FragmentMain" />
-        <argument
-            android:name="myArg"
-            app:argType="integer" />
+        <action
+            android:id="@+id/action_FragmentDisplayWifiScan_to_Help"
+            app:destination="@id/FragmentHelp" />
     </fragment>
+    <fragment
+        android:id="@+id/FragmentHelp"
+        android:name="von.com.au.trackinternet.FragmentHelp"
+        android:label="@string/fragment_help"
+        tools:layout="@layout/fragment_help">
+        <action
+            android:id="@+id/action_FragmentHelp_To_Main"
+            app:destination="@id/FragmentMain" />
+    </fragment>
+    <action android:id="@+id/action_global_FragmentHelp"
+        app:destination="@id/FragmentHelp"/>
+
+
 </navigation>

@@ -34,6 +34,7 @@ class FragmentDisplayOutages : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (MyDebug.DEB_FUN_START) Log.d(tag2, "onCreate(): " + getString(R.string.debug_started))
 
         sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
         //create classes
@@ -77,7 +78,7 @@ class FragmentDisplayOutages : Fragment() {
 
         //set up on click listener for button to return to FragmentMain
         view.findViewById<Button>(R.id.button_return).setOnClickListener {
-            findNavController().navigate(R.id.action_Fragment_Outages_To_Main)
+            findNavController().navigate(R.id.action_FragmentDisplayOutages_To_Main)
         }
     }
 

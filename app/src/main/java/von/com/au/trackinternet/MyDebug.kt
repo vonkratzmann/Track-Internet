@@ -16,7 +16,7 @@ package von.com.au.trackinternet
 object MyDebug {
 
     //if true used to log a function has started
-    const val DEB_FUN_START = false
+    const val DEB_FUN_START = true
 
     //used in debugging of Class UtilsRecOutages
     const val DEB_REC_OUT = false

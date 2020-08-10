@@ -11,8 +11,9 @@
 
     <!-- Strings used in fragments for navigation -->
     <string name="fragment_main_label">Fragment Main</string>
-    <string name="fragment_display_outages">Fragment Display Outages</string>
-    <string name="fragment_display_wifi_scan">Fragment Display Wifi Scan</string>
+    <string name="fragment_display_outages">Display Outages</string>
+    <string name="fragment_display_wifi_scan">Display Wifi Scan</string>
+    <string name="fragment_help">Help</string>
 
     <!-- Shared Preference strings -->
     <string name="pref_key_log_file">Log file</string>
@@ -76,6 +77,7 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="cancel">@android:string/cancel</string>
+    <string name="menu_help">Help</string>
 
 
 </resources>

@@ -3,13 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="mysites.com.au.checkinternetconnection.von.com.au.trackinternet.MainActivity">
     <item
-        android:id="@+id/quit_stop_recording"
+        android:id="@+id/menu_quit_stop_recording"
         android:orderInCategory="100"
         android:title="@string/menu_quit_stop_recording"
         app:showAsAction="never" />
     <item
-        android:id="@+id/quit_keep_recording"
+        android:id="@+id/menu_quit_keep_recording"
         android:orderInCategory="100"
         android:title="@string/menu_quit_keep_recording"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_help"
+        android:orderInCategory="100"
+        android:title="@string/menu_help"
         app:showAsAction="never" />
 </menu>

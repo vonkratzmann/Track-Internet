@@ -48,7 +48,7 @@ class ServiceRecOutages : Service() {
         )
             .setContentTitle(getString(R.string.not_name))
             .setContentText(getString(R.string.not_description_text))
-            .setSmallIcon(R.drawable.ic_android)
+            .setSmallIcon(R.drawable.wifi_on)
             .build()
 
         //get name of the file to record outages in

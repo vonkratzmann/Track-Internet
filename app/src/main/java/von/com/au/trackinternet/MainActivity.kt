@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 import mysites.com.au.checkinternetconnection.R
 
@@ -84,7 +86,7 @@ import mysites.com.au.checkinternetconnection.R
 class MainActivity : AppCompatActivity() {
     private val tag = javaClass.simpleName          //used for debugging in Logcat
     private lateinit var gUtilsGeneral: UtilsGeneral       //used for simple utilities
-    private lateinit var gUtilsRecord: UtilsRecordOutages   //holds record outages functions
+    private lateinit var gUtilsRecordOutages: UtilsRecordOutages   //holds record outages functions
 
     /**
      *  onCreate()
@@ -99,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         gUtilsGeneral = UtilsGeneral(this)
-        gUtilsRecord = UtilsRecordOutages(this)
+        gUtilsRecordOutages = UtilsRecordOutages(this)
     }
 
     /**
@@ -138,19 +140,26 @@ class MainActivity : AppCompatActivity() {
         if (DEB_FUN_START) Log.d(tag, "onOptionsItemSelected(): " + getString(R.string.debug_started))
 
         return when (item.itemId) {
-            R.id.quit_stop_recording -> {
-                gUtilsRecord.stopOurService()
+            R.id.menu_quit_stop_recording -> {
+                gUtilsRecordOutages.stopOurService()
                 gUtilsGeneral.killApp(getString(R.string.app_stopping))
                 true
 
             }
-            R.id.quit_keep_recording -> {
+            R.id.menu_quit_keep_recording -> {
                 gUtilsGeneral.killApp(getString(R.string.app_stopping))
+                true
+            }
+            R.id.menu_help -> {
+                //Navigate to FragmentDisplayOutages
+                //As not in fragment have to use R.id.nav_host_fragment in content_main.xml to find nav controller
+                findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_FragmentHelp)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     /**
      * checkPermAccessLocation()
      *
@@ -162,9 +171,10 @@ class MainActivity : AppCompatActivity() {
         if (DEB_FUN_START) Log.d(tag, "checkPermAccessLocation(): " + getString(R.string.debug_started))
 
         if (ContextCompat.checkSelfPermission(
-               this,
+                this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) !=
-            PackageManager.PERMISSION_GRANTED) {
+            PackageManager.PERMISSION_GRANTED
+        ) {
 
             //toDO() add case to handle user selects do not show this again
 

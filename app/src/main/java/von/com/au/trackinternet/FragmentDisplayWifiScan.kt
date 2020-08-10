@@ -36,9 +36,6 @@ class FragmentDisplayWifiScan : Fragment() {
         //create classes
         utilsGeneral = UtilsGeneral(this.activity?.applicationContext)
         utilsScanWifi = UtilsScanWifi(this.activity?.applicationContext)
-
-
-
     }
 
     /**

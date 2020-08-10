@@ -12,9 +12,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -36,7 +34,7 @@ class FragmentMain : Fragment() {
     private lateinit var gSharedPref: SharedPreferences
     private lateinit var gScanWifi: UtilsScanWifi               //class for scanning wifi
     private lateinit var gUtilsGeneral: UtilsGeneral            //class for general utilities
-    private lateinit var gRecordOutages: UtilsRecordOutages     //class for recording outages
+    private lateinit var gUtilsRecordOutages: UtilsRecordOutages     //class for recording outages
 
 
     /** onCreate()
@@ -50,7 +48,7 @@ class FragmentMain : Fragment() {
 
         gSharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
         //create classes
-        gRecordOutages = UtilsRecordOutages(this.activity?.applicationContext)
+        gUtilsRecordOutages = UtilsRecordOutages(this.activity?.applicationContext)
         gScanWifi = UtilsScanWifi(this.activity?.applicationContext)
         gUtilsGeneral = UtilsGeneral(this.activity?.applicationContext)
     }
@@ -59,9 +57,7 @@ class FragmentMain : Fragment() {
      * onCreateView()
      *
      */
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (DEB_FUN_START) Log.d(tag1, "onCreateView(): " + getString(R.string.debug_started))
 
         // Inflate the layout for this fragment
@@ -95,7 +91,7 @@ class FragmentMain : Fragment() {
         /* button to stop recording outages */
         view.findViewById<Button>(R.id.button_stop_recording).setOnClickListener {
             Toast.makeText(context, getString(R.string.status_stop_header), Toast.LENGTH_LONG).show()
-            gRecordOutages.stopOurService()
+            gUtilsRecordOutages.stopOurService()
         }
 
         /* button to display outages recorded in file */
@@ -213,7 +209,7 @@ class FragmentMain : Fragment() {
         if (file.exists())
             checkIfDeleteFileDialog(file)     //service also started in dialog box
         else
-            gRecordOutages.startOurService(file)     //file does not exist, so need for dialog, just start the service
+            gUtilsRecordOutages.startOurService(file)     //file does not exist, so need for dialog, just start the service
     }
 
     /**
@@ -238,10 +234,10 @@ class FragmentMain : Fragment() {
                 DialogInterface.BUTTON_POSITIVE -> {
                     //delete file before we start
                     file.delete()
-                    gRecordOutages.startOurService(file)
+                    gUtilsRecordOutages.startOurService(file)
                 }
                 DialogInterface.BUTTON_NEGATIVE -> {
-                    gRecordOutages.startOurService(file)
+                    gUtilsRecordOutages.startOurService(file)
                 }
                 DialogInterface.BUTTON_NEUTRAL -> {
                     return@OnClickListener
@@ -328,7 +324,8 @@ class FragmentMain : Fragment() {
             Toast.makeText(context, getString(R.string.error_invalid_email_address), Toast.LENGTH_SHORT).show()
             return
         }
-        sendEmail(address = emailAddress,
+        sendEmail(
+            address = emailAddress,
             subject = getString(R.string.email_subject),
             file = gUtilsGeneral.getFilePathName(view))
     }
@@ -352,7 +349,8 @@ class FragmentMain : Fragment() {
          * triggers a FileUriExposedException.
          * to share content of a private file  use a FileProvider.
          */
-        val pathURI = FileProvider.getUriForFile(requireContext(),
+        val pathURI = FileProvider.getUriForFile(
+            requireContext(),
             requireContext().applicationContext.packageName.toString() + ".provider",
             file)
 
