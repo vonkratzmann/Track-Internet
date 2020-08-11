@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Track Internet</string>
     <string name="scan_wifi">Scan Wifi</string>
     <string name="previous">Previous</string>
@@ -21,16 +21,18 @@
     <string name="pref_key_email">pref email</string>
 
     <!-- Log file strings -->
-    <string name="log_disconnected">Disconnected</string>
-    <string name="log_connected">Connected</string>
-    <string name="log_android_ver_header">Android_Ver</string>
-    <string name="log_no_wifi">Unknown</string>
     <string name="log_date_header">Date</string>
     <string name="log_time_header">Time</string>
     <string name="log_ssid_header">SSID</string>
     <string name="log_freq_header">Freq</string>
     <string name="log_status_header">Status</string>
-
+    <string name="log_android_ver_header">Android_Ver</string>
+    <string name="log_internet_disconnected">Internet.disconnected</string>
+    <string name="log_internet_connected">Internet.connected</string>
+    <string name="log_internet_status_unknown" tools:keep="@string/log_internet_status_unknown">Internet.status.unknown</string>
+    <string name="log_wifi_enabled">Wifi.enabled</string>
+    <string name="log_wifi_disabled">Wifi.disabled</string>
+    <string name="log_wifi_status_unknown">Wifi.status.unknown</string>
 
     <!-- Notification Channel for foreground service -->
     <string name="not_name">Check internet</string>
@@ -54,6 +56,18 @@
     <!-- Debug strings -->
     <string name="debug_started">Started</string>
 
+    <!-- Dialogue strings -->
+    <string name="dialog_file_exists">File Exists</string>
+    <string name="log_delete_file">Delete file before proceeding?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="cancel">@android:string/cancel</string>
+    <string name="menu_help">Help</string>
+
+    <!-- Help fragment strings -->
+    <string name="help_boys">The  boys</string>
+    <string name="help_message">For help, ask these guys</string>
+
     <!-- Status and error strings -->
     <!-- error messages are use when the app is forced to stop or unable to run -->
     <string name="status_scanning">Scanning....</string>
@@ -68,17 +82,5 @@
     <string name="error_storage_not_accessible">Cannot access external storage</string>
     <string name="error_max_records">Maximum number of records reached</string>
     <string name="error_no_permission">Stopping as permission not approved</string>
-
-
-    <string name="dialog_file_exists">File Exists</string>
-    <string name="log_delete_file">Delete file before proceeding?</string>
-
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
-    <string name="cancel">@android:string/cancel</string>
-    <string name="menu_help">Help</string>
-    <string name="help_boys">The  boys</string>
-    <string name="help_message">For help, ask these guys</string>
-
 
 </resources>

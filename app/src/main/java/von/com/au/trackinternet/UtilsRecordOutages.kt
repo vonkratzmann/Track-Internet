@@ -18,8 +18,8 @@ import android.os.Parcelable
 import android.util.Log
 import mysites.com.au.checkinternetconnection.R
 import von.com.au.trackinternet.MyConstants.LOG_HEADER_SPACING
+import von.com.au.trackinternet.MyConstants.MAX_FILE_RECORDS
 import von.com.au.trackinternet.MyDebug.DEB_FUN_START
-import von.com.au.trackinternet.MyDebug.DEB_REC_OUT
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -33,13 +33,15 @@ class UtilsRecordOutages(val mContext: Context?) {
     private val tag = javaClass.simpleName          //used for debugging in Logcat
     private lateinit var gOutputStream: FileOutputStream    //stream used to write to log file
     private var gLineCount = 0                              //track number of records written
-    private lateinit var gBroadcastReceiver: BroadcastReceiver
+    private lateinit var gWifiReceiver: BroadcastReceiver
+    private lateinit var gNetworkReceiver: BroadcastReceiver
     private lateinit var gUtilsGeneral: UtilsGeneral       //simple utilities functions
 
     /* used to track last status, if no change in status from last time does not write a record to log file
      * some phones broadcast wifi changes very close together, but on interrogation the state has not changed
      */
-    private var lastStatus: String = mContext!!.getString(R.string.status_network_unknown)
+    private var gNetworkLastStatus: String? = mContext?.getString(R.string.status_network_unknown)
+    private var gWifiLastStatus: String? = mContext?.getString(R.string.log_wifi_status_unknown)
 
     /**
      * startRecordOutages(mFilename: String)
@@ -69,7 +71,9 @@ class UtilsRecordOutages(val mContext: Context?) {
             Log.w(tag, "Error writing to file: $file  $e")
             return false
         }
-        setUpWifiChangeBroadcastRec()
+        setupNetworkChangeBroadcastRec()
+        setupWifiChangeBroadcastRec()
+        registerNetworkChangeRec()
         registerWifiChangeRec()
         return true
     }
@@ -104,7 +108,7 @@ class UtilsRecordOutages(val mContext: Context?) {
      * generate a string with column names for log file
      */
     private fun getColumnNames(): String {
-        if (DEB_FUN_START) Log.d(tag, "getColumnNames(: " + mContext?.getString(R.string.debug_started) + "\n")
+        if (DEB_FUN_START) Log.d(tag, "getColumnNames(): " + mContext?.getString(R.string.debug_started) + "\n")
 
         return (mContext?.getString(R.string.log_date_header)?.padEnd(LOG_HEADER_SPACING)
                 + mContext?.getString(R.string.log_time_header)?.padEnd(LOG_HEADER_SPACING)
@@ -128,7 +132,7 @@ class UtilsRecordOutages(val mContext: Context?) {
 
         val stopHeader: String = gUtilsGeneral.getDateTime() + " " + mContext?.getString(R.string.status_stop_header) + "\n"
         try {
-            unRegisterWifiChangeRec()
+            unRegisterNetworkChangeRec()
             gOutputStream.write(stopHeader.toByteArray())
             gOutputStream.close()
         } catch (e: IOException) {
@@ -137,7 +141,7 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * setUpWifiChangeBroadcastRec()
+     * setupNetworkChangeBroadcastRec()
      *
      * called by startRecordOutages()
      * Set up broadcast receiver for Wifi changes
@@ -150,44 +154,79 @@ class UtilsRecordOutages(val mContext: Context?) {
      *  if reached max number of records
      *   - stop recording
      */
-    private fun setUpWifiChangeBroadcastRec() {
-        if (DEB_FUN_START) Log.d(tag, "wifiChangeBroadcastRec(): " + mContext?.getString(R.string.debug_started))
+    private fun setupNetworkChangeBroadcastRec() {
+        if (DEB_FUN_START) Log.d(tag, "setupNetworkChangeBroadcastRec(): " + mContext?.getString(R.string.debug_started))
 
-        gBroadcastReceiver = object : BroadcastReceiver() {
+        gNetworkReceiver = object : BroadcastReceiver() {
 
             //receiver for changes to internet connections
             @Suppress("DEPRECATION")
             override fun onReceive(c: Context, intent: Intent) {
-                if (DEB_FUN_START) Log.d(tag, "BroadcastReceiver(): " + mContext?.getString(R.string.debug_started))
-
-                lateinit var status: String         //used to store status to be written to log file
+                if (DEB_FUN_START) Log.d(tag, "NetworkBroadcastReceiver(): " + mContext?.getString(R.string.debug_started))
 
                 val extras: Bundle? = intent.extras     //get network information to write to log file
                 val info = extras?.getParcelable<Parcelable>("networkInfo") as NetworkInfo?
 
-                status = when (info!!.state) {
-                    NetworkInfo.State.CONNECTED -> {
-                        if (DEB_REC_OUT) Log.d(tag, "BroadcastReceiver(): " + mContext?.getString(R.string.log_connected))
-                        mContext?.getString(R.string.log_connected) + "\n"
-                    }
-                    NetworkInfo.State.DISCONNECTED -> {
-                        if (DEB_REC_OUT) Log.d(tag, "BroadcastReceiver(): " + mContext?.getString(R.string.log_disconnected))
-                        mContext?.getString(R.string.log_disconnected) + "\n"
-                    }
-                    else -> {
-                        if (DEB_REC_OUT) Log.d(tag,
-                            "BroadcastReceiver(): " + mContext?.getString(R.string.status_network_unknown))
-                        mContext?.getString(R.string.status_network_unknown) + "\n"
-                    }
+                val status = when (info!!.state) {      //used to store status to be written to log file
+
+                    NetworkInfo.State.CONNECTED -> mContext?.getString(R.string.log_internet_connected)
+
+                    NetworkInfo.State.DISCONNECTED -> mContext?.getString(R.string.log_internet_disconnected)
+
+                    else -> mContext?.getString(R.string.status_network_unknown)
                 }
-                if (lastStatus == status) return                   //no change in status, do nothing
-                lastStatus = status
+                if (gNetworkLastStatus == status) return                   //no change in status, do nothing
+                gNetworkLastStatus = status
+
                 //write the record
-                gOutputStream.write("${buildLogFileRecord()} $status".toByteArray())
+                gOutputStream.write("${buildLogFileRecord()} $status\n".toByteArray())
+
                 //check if reached maximum number of records
-                if (gLineCount++ > MyConstants.MAX_FILE_RECORDS) {
-                    gOutputStream.write("${gUtilsGeneral.getDateTime()} ${mContext?.getString(R.string.error_max_records)} \n"
-                        .toByteArray())
+                if (gLineCount++ > MAX_FILE_RECORDS) {
+                    gOutputStream.write(
+                        "${gUtilsGeneral.getDateTime()} ${mContext?.getString(R.string.error_max_records)} \n"
+                            .toByteArray())
+                    stopRecordingOutages()
+                    //todo stop foreground service
+                }
+            }
+        }
+    }
+
+    /**
+     * setupWifiChangeBroadcastRec()
+     *
+     * Set up broadcast receiver for Wifi changes
+     * override function onReceive
+     * for each wifi change records an entry in the log file
+     */
+    private fun setupWifiChangeBroadcastRec() {
+        if (DEB_FUN_START) Log.d(tag, "setupNWifiChangeBroadcastRec(): " + mContext?.getString(R.string.debug_started))
+
+        gWifiReceiver = object : BroadcastReceiver() {
+
+            //receiver for changes to wifi connections
+            override fun onReceive(c: Context, intent: Intent) {
+                if (DEB_FUN_START) Log.d(tag, "WifiBroadcastReceiver(): " + mContext?.getString(R.string.debug_started))
+
+                val dateTime = gUtilsGeneral.getDateTime()
+                val status: String? = when (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN)) {
+
+                    WifiManager.WIFI_STATE_DISABLED -> mContext?.getString(R.string.log_wifi_disabled)
+
+                    WifiManager.WIFI_STATE_ENABLED -> mContext?.getString(R.string.log_wifi_enabled)
+
+                    else -> mContext?.getString(R.string.log_wifi_status_unknown)
+                }
+                if (gWifiLastStatus == status) return                   //no change in status, do nothing
+                gWifiLastStatus = status
+
+                //write the record
+                gOutputStream.write("${buildLogFileRecord()} $status\n".toByteArray())
+
+                //check if reached maximum number of records
+                if (gLineCount++ > MAX_FILE_RECORDS) {
+                    gOutputStream.write("$dateTime ${mContext?.getString(R.string.error_max_records)} \n".toByteArray())
                     stopRecordingOutages()
                     //todo stop foreground service
                 }
@@ -204,46 +243,85 @@ class UtilsRecordOutages(val mContext: Context?) {
         if (DEB_FUN_START) Log.d(tag, "buildLogFileRecord(): " + mContext?.getString(R.string.debug_started) + "\n")
 
         val dateTime = gUtilsGeneral.getDateTime()
-        val wifiName = getWifiName()
-            ?: mContext?.getString(R.string.log_no_wifi)                //if no wifi set name to "No wifi"
+        val wifiName = getWifiName() ?: mContext?.getString(R.string.log_wifi_status_unknown)                //if no wifi set name to "No wifi"
         val wifiFrequency: Int = getWifiFrequency() ?: 0                //if no wifi, set frequency to zero
         return "$dateTime $wifiName $wifiFrequency"
     }
 
     /*
-     * registerWifiChangeRec()
+     * registerNetworkChangeRec()
      *
      * called by startRecordOutages
      * Register a broadcast receiver for any Wifi network changes
      */
-    private fun registerWifiChangeRec() {
-        if (DEB_FUN_START) Log.d(tag, "registerWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
+    private fun registerNetworkChangeRec() {
+        if (DEB_FUN_START) Log.d(tag, "registerNetworkChangeRec(): " + mContext?.getString(R.string.debug_started))
 
         val intentFilter = IntentFilter()
         @Suppress("DEPRECATION")
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         try {
-            mContext?.registerReceiver(gBroadcastReceiver, intentFilter)
+            mContext?.registerReceiver(gNetworkReceiver, intentFilter)
         } catch (e: java.lang.IllegalArgumentException) {
             e.printStackTrace()
         }
     }
 
     /*
-     * unRegisterWifiChangeRec()
+     * unRegisterNetworkChangeRec()
      *
      * called by stopRecordingOutages()
      * unregister a broadcast receiver for any Wifi network changes
      */
-    private fun unRegisterWifiChangeRec() {
-        if (DEB_FUN_START) Log.d(tag, "unregisterWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
+
+    private fun unRegisterNetworkChangeRec() {
+        if (DEB_FUN_START) Log.d(tag, "unregisterNetworkChangeRec(): " + mContext?.getString(R.string.debug_started))
 
         try {
-            mContext?.unregisterReceiver(gBroadcastReceiver)
+            mContext?.unregisterReceiver(gWifiReceiver)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
     }
+
+    /*
+       * registerWifiChangeRec()
+       *
+       * Register a broadcast receiver for any Wifi network changes
+       */
+    @Suppress("DEPRECATION")
+    private fun registerWifiChangeRec() {
+        if (DEB_FUN_START) Log.d(tag, "registerWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
+
+        val intentFilter = IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION)
+
+        //registerReceiver belongs to the Activity class, in fragment have to add requireActivity()
+        try {
+            mContext?.registerReceiver(gWifiReceiver, intentFilter)
+        } catch (e: java.lang.IllegalArgumentException) {
+            e.printStackTrace()
+        }
+
+
+    }
+
+    /*
+     * unRegisterWifiChangeRec()
+     *
+     * unregister a broadcast receiver for any Wifi network changes
+     */
+    private fun unRegisterWifiChangeRec() {
+        if (DEB_FUN_START) Log.d(
+            tag,
+            "unregisterWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
+        try {
+            //unregisterReceiver belongs to the Activity class, in fragment have to add requireActivity()
+            mContext?.unregisterReceiver(gNetworkReceiver)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
+    }
+
 
     /**
      * getWifiName(context: Context)
@@ -277,7 +355,8 @@ class UtilsRecordOutages(val mContext: Context?) {
     @SuppressLint("WifiManagerPotentialLeak")
     @Suppress("DEPRECATION")
     private fun getWifiFrequency(): Int? {
-        if (DEB_FUN_START) Log.d(tag,
+        if (DEB_FUN_START) Log.d(
+            tag,
             "getFrequency(): " + mContext?.getString(R.string.debug_started))
 
         //use getApplicationContext as WifiService will memory leak

@@ -3,4 +3,10 @@
     <issue id="IconLocation">
         <ignore path="src/main/res/drawable/boys.jpg" />
     </issue>
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/drawable/boys.jpg" />
+        <ignore path="src/main/res/mipmap-hdpi/boys.png" />
+        <ignore path="src/main/res/mipmap-xhdpi/boys.png" />
+        <ignore path="src/main/res/mipmap-xxhdpi/boys.png" />
+    </issue>
 </lint>
