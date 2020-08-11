@@ -1,3 +1,4 @@
+<!--suppress XmlUnusedNamespaceDeclaration -->
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Track Internet</string>
     <string name="scan_wifi">Scan Wifi</string>
@@ -24,15 +25,16 @@
     <string name="log_date_header">Date</string>
     <string name="log_time_header">Time</string>
     <string name="log_ssid_header">SSID</string>
+    <string name="log_no_wifi_name">SSID.unknown</string>
     <string name="log_freq_header">Freq</string>
     <string name="log_status_header">Status</string>
     <string name="log_android_ver_header">Android_Ver</string>
     <string name="log_internet_disconnected">Internet.disconnected</string>
     <string name="log_internet_connected">Internet.connected</string>
-    <string name="log_internet_status_unknown" tools:keep="@string/log_internet_status_unknown">Internet.status.unknown</string>
+    <string name="log_internet_status_unknown">Unknown</string>
     <string name="log_wifi_enabled">Wifi.enabled</string>
     <string name="log_wifi_disabled">Wifi.disabled</string>
-    <string name="log_wifi_status_unknown">Wifi.status.unknown</string>
+    <string name="log_wifi_status_unknown">Unknown</string>
 
     <!-- Notification Channel for foreground service -->
     <string name="not_name">Check internet</string>
@@ -71,7 +73,6 @@
     <!-- Status and error strings -->
     <!-- error messages are use when the app is forced to stop or unable to run -->
     <string name="status_scanning">Scanning....</string>
-    <string name="status_network_unknown">Network wifi state unknown</string>
     <string name="status_scan_success">Scan Success</string>
     <string name="status_stop_header">"Recording stopped"</string>
     <string name="status_start_header">"Recording started"</string>
@@ -82,5 +83,6 @@
     <string name="error_storage_not_accessible">Cannot access external storage</string>
     <string name="error_max_records">Maximum number of records reached</string>
     <string name="error_no_permission">Stopping as permission not approved</string>
+
 
 </resources>

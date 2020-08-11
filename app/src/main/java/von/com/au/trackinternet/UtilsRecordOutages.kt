@@ -40,7 +40,7 @@ class UtilsRecordOutages(val mContext: Context?) {
     /* used to track last status, if no change in status from last time does not write a record to log file
      * some phones broadcast wifi changes very close together, but on interrogation the state has not changed
      */
-    private var gNetworkLastStatus: String? = mContext?.getString(R.string.status_network_unknown)
+    private var gNetworkLastStatus: String? = mContext?.getString(R.string.log_internet_status_unknown)
     private var gWifiLastStatus: String? = mContext?.getString(R.string.log_wifi_status_unknown)
 
     /**
@@ -71,10 +71,11 @@ class UtilsRecordOutages(val mContext: Context?) {
             Log.w(tag, "Error writing to file: $file  $e")
             return false
         }
-        setupNetworkChangeBroadcastRec()
         setupWifiChangeBroadcastRec()
-        registerNetworkChangeRec()
+        setupNetworkChangeBroadcastRec()
         registerWifiChangeRec()
+        registerNetworkChangeRec()
+
         return true
     }
 
@@ -173,7 +174,7 @@ class UtilsRecordOutages(val mContext: Context?) {
 
                     NetworkInfo.State.DISCONNECTED -> mContext?.getString(R.string.log_internet_disconnected)
 
-                    else -> mContext?.getString(R.string.status_network_unknown)
+                    else -> mContext?.getString(R.string.log_internet_status_unknown)
                 }
                 if (gNetworkLastStatus == status) return                   //no change in status, do nothing
                 gNetworkLastStatus = status
@@ -210,6 +211,7 @@ class UtilsRecordOutages(val mContext: Context?) {
                 if (DEB_FUN_START) Log.d(tag, "WifiBroadcastReceiver(): " + mContext?.getString(R.string.debug_started))
 
                 val dateTime = gUtilsGeneral.getDateTime()
+                //EXTRA_WIFI_STATE is the lookup key for whether Wi-Fi is enabled, disabled, enabling, disabling, or unknown.
                 val status: String? = when (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN)) {
 
                     WifiManager.WIFI_STATE_DISABLED -> mContext?.getString(R.string.log_wifi_disabled)
@@ -243,7 +245,7 @@ class UtilsRecordOutages(val mContext: Context?) {
         if (DEB_FUN_START) Log.d(tag, "buildLogFileRecord(): " + mContext?.getString(R.string.debug_started) + "\n")
 
         val dateTime = gUtilsGeneral.getDateTime()
-        val wifiName = getWifiName() ?: mContext?.getString(R.string.log_wifi_status_unknown)                //if no wifi set name to "No wifi"
+        val wifiName = getWifiName() ?: mContext?.getString(R.string.log_no_wifi_name)                //if no wifi set name to "No wifi"
         val wifiFrequency: Int = getWifiFrequency() ?: 0                //if no wifi, set frequency to zero
         return "$dateTime $wifiName $wifiFrequency"
     }
