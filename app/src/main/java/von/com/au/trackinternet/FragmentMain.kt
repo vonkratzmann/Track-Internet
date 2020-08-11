@@ -151,8 +151,9 @@ class FragmentMain : Fragment() {
 
     /**
      * onPause()
-     *
-     *  todo() check if need to unregisterWifiChangeRec()
+     * do not unregister broadcast receivers here as they are used by foreground service
+     * In foreground service onDestroy() calls stopRecording()
+     * which unregisters the broadcast receivers
      */
     override fun onPause() {
         super.onPause()

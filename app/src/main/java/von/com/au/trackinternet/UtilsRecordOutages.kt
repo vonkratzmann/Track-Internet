@@ -123,9 +123,12 @@ class UtilsRecordOutages(val mContext: Context?) {
      * stopRecordingOutages()
      *
      * Called by BroadCastRec() if reached maximum number of records or
-     * Called by onDestroy() in foreground service
+     * Called by onDestroy() in foreground service or
+     * called by onOptionsItemSelected()in main activity
+     * when a menu item is selected to quit the app and stop recording
+     *
      * write a stop header with date time to file
-     * unregister listener
+     * unregister listeners
      * close stream
      */
     fun stopRecordingOutages() {
@@ -134,6 +137,7 @@ class UtilsRecordOutages(val mContext: Context?) {
         val stopHeader: String = gUtilsGeneral.getDateTime() + " " + mContext?.getString(R.string.status_stop_header) + "\n"
         try {
             unRegisterNetworkChangeRec()
+            unRegisterWifiChangeRec()
             gOutputStream.write(stopHeader.toByteArray())
             gOutputStream.close()
         } catch (e: IOException) {

@@ -24,7 +24,9 @@
         tools:layout="@layout/fragment_display_outages">
         <action
             android:id="@+id/action_FragmentDisplayOutages_To_Main"
-            app:destination="@id/FragmentMain" />
+            app:destination="@id/FragmentMain"
+            app:popUpTo="@+id/FragmentMain"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/FragmentDisplayWifiScan"
@@ -33,7 +35,9 @@
         tools:layout="@layout/fragment_display_wifi_scan">
         <action
             android:id="@+id/action_Fragment_Wifi_Scan_To_Main"
-            app:destination="@id/FragmentMain" />
+            app:destination="@id/FragmentMain"
+            app:popUpTo="@+id/FragmentMain"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/FragmentHelp"
@@ -45,7 +49,7 @@
             app:destination="@id/FragmentMain" />
     </fragment>
     <action android:id="@+id/action_global_FragmentHelp"
-        app:destination="@id/FragmentHelp"/>
-
-
+        app:destination="@id/FragmentHelp"
+        app:popUpTo="@+id/FragmentMain"
+        app:popUpToInclusive="true"/>
 </navigation>

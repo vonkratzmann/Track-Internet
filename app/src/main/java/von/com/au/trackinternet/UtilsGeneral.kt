@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.finishAffinity
 import mysites.com.au.checkinternetconnection.R
 import von.com.au.trackinternet.MyConstants.DELAY_KILL
 import von.com.au.trackinternet.MyConstants.DIRECTORY
@@ -151,7 +152,8 @@ class UtilsGeneral(private val mContext: Context?) {
      *
      */
     fun getDateTime(): String {
-        if (DEB_FUN_START) Log.d(tag,
+        if (DEB_FUN_START) Log.d(
+            tag,
             "getDateTime(): " + mContext?.getString(R.string.debug_started))
 
         val dateTime: String =

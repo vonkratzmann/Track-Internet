@@ -158,6 +158,9 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.menu_quit_stop_recording -> {
                 gUtilsRecordOutages.stopOurService()
+                //stopOurService() stops foreground service
+                //the foreground service onDestroy() will then call stopRecordingOutages
+                //which unregisters broadcast receivers and closes file output stream
                 gUtilsGeneral.killApp(getString(R.string.app_stopping))
                 true
 
@@ -183,6 +186,7 @@ class MainActivity : AppCompatActivity() {
      * Check we have permissions to access coarse location
      * this is required for Wifi Scan
      * without permission the scan will not return any results
+     * ignores tick box do not show this again as app wifi scan will not work without it
      */
     private fun checkPermAccessLocation() {
         if (DEB_FUN_START) Log.d(tag, "checkPermAccessLocation(): " + getString(R.string.debug_started))
@@ -191,11 +195,7 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED
-        ) {
-
-            //toDO() add case to handle user selects do not show this again
-
-            //Permission is not granted, request permission
+        ) {            //Permission is not granted, request permission
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), MyConstants.PERM_REQUEST_CODE
