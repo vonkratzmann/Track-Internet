@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import mysites.com.au.checkinternetconnection.R
@@ -35,7 +36,7 @@ class FragmentHelp : Fragment() {
         if (MyDebug.DEB_FUN_START) Log.d(tag3, "onCreateView(): " + getString(R.string.debug_started))
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_display_outages, container, false)
+        return inflater.inflate(R.layout.fragment_help, container, false)
     }
 
     /**
@@ -50,10 +51,11 @@ class FragmentHelp : Fragment() {
             findNavController().navigate(R.id.action_FragmentHelp_To_Main)
         }
 
-        //  val imageView: ImageView = view.findViewById<ImageView>(R.id.imageView_help)
-        //  val bitMap: Bitmap = BitmapFactory.decodeFile("boys")
-        //  imageView.setImageBitmap(bitMap)
+        val imageView: ImageView = view.findViewById(R.id.imageView_help)
+    //    val bitMap: Bitmap = BitmapFactory.decodeFile("boys.jpg")
+        val imageResource: Int = resources.getIdentifier("mipmap/boys", "drawable", context?.packageName)
+        imageView.setImageResource((imageResource))
 
-        //  gUtilsGeneral.help(view)
+
     }
 }

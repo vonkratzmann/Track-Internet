@@ -170,7 +170,6 @@ class MainActivity : AppCompatActivity() {
                 //Navigate to FragmentDisplayOutages
                 //As not in fragment have to use R.id.nav_host_fragment in content_main.xml to find nav controller
                 //uses global navigation action to load help fragment,
-                // so no specific action for current fragment to help fragment
                 findNavController(R.id.nav_host_fragment).navigate(R.id.action_global_FragmentHelp)
                 true
             }

@@ -77,7 +77,8 @@
     <string name="no">NO</string>
     <string name="cancel">@android:string/cancel</string>
     <string name="menu_help">Help</string>
-    <string name="theboys">The  boys</string>
+    <string name="help_boys">The  boys</string>
+    <string name="help_message">For help, ask these guys</string>
 
 
 </resources>
