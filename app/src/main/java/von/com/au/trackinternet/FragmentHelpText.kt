@@ -6,16 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import mysites.com.au.checkinternetconnection.R
 
 /**
- * Fragment class for help
+ * Fragment class for help text
  */
-class FragmentHelp : Fragment() {
-    private val tag3: String = javaClass.simpleName
+class FragmentHelpText : Fragment() {
+    private val tag4: String = javaClass.simpleName
 
     private lateinit var gUtilsGeneral: UtilsGeneral       //used for simple utilities
 
@@ -24,7 +24,7 @@ class FragmentHelp : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (MyDebug.DEB_FUN_START) Log.d(tag3, "onCreate(): " + getString(R.string.debug_started))
+        if (MyDebug.DEB_FUN_START) Log.d(tag4, "onCreate(): " + getString(R.string.debug_started))
 
         gUtilsGeneral = UtilsGeneral(context)
     }
@@ -33,10 +33,10 @@ class FragmentHelp : Fragment() {
      * onCreateView()
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (MyDebug.DEB_FUN_START) Log.d(tag3, "onCreateView(): " + getString(R.string.debug_started))
+        if (MyDebug.DEB_FUN_START) Log.d(tag4, "onCreateView(): " + getString(R.string.debug_started))
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_help, container, false)
+        return inflater.inflate(R.layout.fragment_help_text, container, false)
     }
 
     /**
@@ -44,15 +44,14 @@ class FragmentHelp : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (MyDebug.DEB_FUN_START) Log.d(tag3, "onViewCreated(): " + getString(R.string.debug_started))
+        if (MyDebug.DEB_FUN_START) Log.d(tag4, "onViewCreated(): " + getString(R.string.debug_started))
 
-        //set up on click listener to go help text
-        view.findViewById<ImageView>(R.id.imageView_help).setOnClickListener {
-            findNavController().navigate(R.id.action_FragmentHelp_To_FragmentHelpText)
-        }
-        //set up on click listener for button to return to fragment main
+     val textView: TextView = view.findViewById(R.id.textView_helptext)
+        textView.setText("Hello")
+
+        //set up on click listener for button to return to previous fragment
         view.findViewById<Button>(R.id.button_return).setOnClickListener {
-            findNavController().navigate(R.id.action_FragmentHelp_To_Main)
+            findNavController().navigate(R.id.action_FragmentHelpText_To_Main)
         }
     }
 }
