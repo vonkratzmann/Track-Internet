@@ -384,7 +384,7 @@ class UtilsRecordOutages(val mContext: Context?) {
      *
      */
     fun stopOurService() {
-        if (DEB_FUN_START) Log.d(tag, "stopService(): " + mContext?.getString(R.string.debug_started))
+        if (DEB_FUN_START) Log.d(tag, "stopOurService(): " + mContext?.getString(R.string.debug_started))
 
         val serviceIntent = Intent(mContext, ServiceRecOutages::class.java)
         mContext?.stopService(serviceIntent)

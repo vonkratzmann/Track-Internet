@@ -46,7 +46,7 @@ class FragmentDisplayOutages : Fragment() {
      *
      */
 
-  override fun onCreateView(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
@@ -100,7 +100,8 @@ class FragmentDisplayOutages : Fragment() {
             //read file
             file.useLines { lines: Sequence<String> -> arrayList.addAll(lines) }
             //setup adapter
-            val adapter: ArrayAdapter<String> = ArrayAdapter(requireContext(),
+            val adapter: ArrayAdapter<String> = ArrayAdapter(
+                requireContext(),
                 android.R.layout.simple_list_item_1,
                 arrayList)
 

@@ -134,7 +134,7 @@ class FragmentMain : Fragment() {
 
         //check external storage available, if not kill app
         if (!gUtilsGeneral.checkExtStorageForRW()) {
-            gUtilsGeneral.killApp(getString(R.string.error_storage_not_accessible))
+            MainActivity().killApp(getString(R.string.error_storage_not_accessible))
         }
 
         //check if wifi enabled, if not kill app
@@ -145,7 +145,7 @@ class FragmentMain : Fragment() {
 
         if (!wifi) {
             if (MyDebug.DEB_ACT_MAIN) Log.d(tag, getString(R.string.error_wifi_disabled))
-            gUtilsGeneral.killApp(getString(R.string.error_wifi_disabled))
+            MainActivity().killApp(getString(R.string.error_wifi_disabled))
         }
     }
 

@@ -2,8 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/FragmentMain"
-    android:name="main">
+    android:name="main"
+    app:startDestination="@id/FragmentMain">
 
     <fragment
         android:id="@+id/FragmentMain"
@@ -24,9 +24,7 @@
         tools:layout="@layout/fragment_display_outages">
         <action
             android:id="@+id/action_FragmentDisplayOutages_To_Main"
-            app:destination="@id/FragmentMain"
-            app:popUpTo="@+id/FragmentMain"
-            app:popUpToInclusive="true"/>
+            app:destination="@id/FragmentMain" />
     </fragment>
     <fragment
         android:id="@+id/FragmentDisplayWifiScan"
@@ -35,9 +33,7 @@
         tools:layout="@layout/fragment_display_wifi_scan">
         <action
             android:id="@+id/action_Fragment_Wifi_Scan_To_Main"
-            app:destination="@id/FragmentMain"
-            app:popUpTo="@+id/FragmentMain"
-            app:popUpToInclusive="true"/>
+            app:destination="@id/FragmentMain" />
     </fragment>
     <fragment
         android:id="@+id/FragmentHelp"
@@ -46,10 +42,11 @@
         tools:layout="@layout/fragment_help">
         <action
             android:id="@+id/action_FragmentHelp_To_Main"
-            app:destination="@id/FragmentMain" />
+            app:destination="@id/FragmentMain"
+            app:popUpTo="@+id/FragmentMain"
+            app:popUpToInclusive="true"/>
     </fragment>
-    <action android:id="@+id/action_global_FragmentHelp"
-        app:destination="@id/FragmentHelp"
-        app:popUpTo="@+id/FragmentMain"
-        app:popUpToInclusive="true"/>
+    <action
+        android:id="@+id/action_global_FragmentHelp"
+        app:destination="@id/FragmentHelp" />
 </navigation>

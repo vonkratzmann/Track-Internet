@@ -3,9 +3,11 @@ package von.com.au.trackinternet
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -14,6 +16,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.android.synthetic.main.activity_main.*
 import mysites.com.au.checkinternetconnection.R
+import von.com.au.trackinternet.MyConstants.DELAY_KILL
 import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 
 /**
@@ -94,15 +97,14 @@ class MainActivity : AppCompatActivity() {
     /**
      *  onCreate()
      *
-     *  sets up a notification channel
      *  set up navigation to work with action bar
      *  so title in action bar changes when a fragment is loaded
      *  instantiate utility classes
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (DEB_FUN_START) Log.d(tag, "onCreate(): " + getString(R.string.debug_started))
-
         super.onCreate(savedInstanceState)
+
+        if (DEB_FUN_START) Log.d(tag, "onCreate(): " + getString(R.string.debug_started))
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
@@ -161,12 +163,12 @@ class MainActivity : AppCompatActivity() {
                 //stopOurService() stops foreground service
                 //the foreground service onDestroy() will then call stopRecordingOutages
                 //which unregisters broadcast receivers and closes file output stream
-                gUtilsGeneral.killApp(getString(R.string.app_stopping))
+                killApp(getString(R.string.app_stopping))
                 true
 
             }
             R.id.menu_quit_keep_recording -> {
-                gUtilsGeneral.killApp(getString(R.string.app_stopping))
+                killApp(getString(R.string.app_stopping))
                 true
             }
             R.id.menu_help -> {
@@ -219,9 +221,29 @@ class MainActivity : AppCompatActivity() {
                     // permission was granted, yay!
                 } else {
                     // permission denied, boo!
-                    gUtilsGeneral.killApp(getString(R.string.error_no_permission))
+                    killApp(getString(R.string.error_no_permission))
                 }
             }
         }
+    }
+
+    /**
+     * killApp(message: String)
+     *
+     * Displays app name then the message
+     * Delay before killing the app
+     * so user can see the message
+     *
+     * Note had this in class UtilsGeneral but had issue with getting finish() to work
+     * so moved it here
+     */
+    fun killApp(message: String) {
+        if (DEB_FUN_START) Log.d(tag, "killApp(): " + getString(R.string.debug_started))
+
+        val appName: String? = getString(R.string.app_name)
+        Toast.makeText(this, "$appName  $message", Toast.LENGTH_SHORT).show()
+        Handler().postDelayed({
+            finish()         //run kill after the delay
+        }, DELAY_KILL)
     }
 }

@@ -36,6 +36,8 @@ object MyConstants {
      */
     const val NOT_CHANNEL_ID = "notchannelId"
 
+    const val ONGOING_NOTIFICATION_ID = 1
+
     /**
      * Used to check if have coarse location access permission
      */

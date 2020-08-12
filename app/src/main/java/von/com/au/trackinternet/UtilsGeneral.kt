@@ -5,15 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Environment
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat.finishAffinity
 import mysites.com.au.checkinternetconnection.R
-import von.com.au.trackinternet.MyConstants.DELAY_KILL
 import von.com.au.trackinternet.MyConstants.DIRECTORY
 import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 import von.com.au.trackinternet.MyDebug.DEB_UTIL_GEN
@@ -24,7 +20,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.system.exitProcess
 
 /**
  * Utilities for general operations
@@ -124,24 +119,6 @@ class UtilsGeneral(private val mContext: Context?) {
             return false
         }
         return true
-    }
-
-
-    /**
-     * killApp(message: String)
-     *
-     * Displays app name then the message
-     * Delay before killing the app
-     * so user can see the message
-     */
-    fun killApp(message: String) {
-        if (DEB_FUN_START) Log.d(tag, "killApp(): " + mContext?.getString(R.string.debug_started))
-
-        val appName: String? = mContext?.getString(R.string.app_name)
-        Toast.makeText(mContext, "$appName  $message", Toast.LENGTH_SHORT).show()
-        Handler().postDelayed({
-            exitProcess(-1)         //run kill after the delay
-        }, DELAY_KILL)
     }
 
     /**

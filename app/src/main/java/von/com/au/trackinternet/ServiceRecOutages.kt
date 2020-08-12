@@ -1,12 +1,18 @@
 package von.com.au.trackinternet
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import mysites.com.au.checkinternetconnection.R
+import von.com.au.trackinternet.MyConstants.NOT_CHANNEL_ID
+import von.com.au.trackinternet.MyConstants.ONGOING_NOTIFICATION_ID
 import java.io.File
 
 /**
@@ -36,15 +42,19 @@ class ServiceRecOutages : Service() {
      * onStartCommand()
      *
      * called every time service is started
-     * sets up notification
+     * sets up notification channel
+     * and a notification
      * starts recording
      * runs service in foreground
      */
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (MyDebug.DEB_FUN_START) Log.d(tag, "onStartCommand(): " + getString(R.string.debug_started))
 
-        val notification: Notification = NotificationCompat.Builder(this,
-            MyConstants.NOT_CHANNEL_ID
+        createNotificationChannel()
+
+        val notification: Notification = NotificationCompat.Builder(
+            this,
+            NOT_CHANNEL_ID
         )
             .setContentTitle(getString(R.string.not_name))
             .setContentText(getString(R.string.not_description_text))
@@ -56,7 +66,7 @@ class ServiceRecOutages : Service() {
         //start recording
         utilsRecOut.startRecordOutages(File(fileName))
 
-        startForeground(1, notification)
+        startForeground(ONGOING_NOTIFICATION_ID, notification)
         return START_STICKY
     }
 
@@ -82,5 +92,24 @@ class ServiceRecOutages : Service() {
     override fun onBind(intent: Intent): IBinder? {
         if (MyDebug.DEB_FUN_START) Log.d(tag, "onBind(): " + getString(R.string.debug_started))
         return null
+    }
+
+    /**
+     *
+     */
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                NOT_CHANNEL_ID,
+                getString(R.string.not_name),
+                NotificationManager.IMPORTANCE_DEFAULT)
+            notificationChannel.description = getString(R.string.not_description_text)
+
+            /* require a notification handler, so register the channel with system
+         * importance or notification behaviours cannot be change after this
+         */
+            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
     }
 }
