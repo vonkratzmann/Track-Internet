@@ -50,9 +50,5 @@ class FragmentHelp : Fragment() {
         view.findViewById<Button>(R.id.button_return).setOnClickListener {
             findNavController().navigate(R.id.action_FragmentHelp_To_Main)
         }
-        //display image for help fragment
-        val imageView: ImageView = view.findViewById(R.id.imageView_help)
-        val imageResource: Int = resources.getIdentifier("mipmap/boys", "drawable", context?.packageName)
-        imageView.setImageResource((imageResource))
     }
 }
