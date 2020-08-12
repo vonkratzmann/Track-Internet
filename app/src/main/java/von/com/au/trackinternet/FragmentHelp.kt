@@ -50,9 +50,5 @@ class FragmentHelp : Fragment() {
         view.findViewById<ImageView>(R.id.imageView_help).setOnClickListener {
             findNavController().navigate(R.id.action_FragmentHelp_To_FragmentHelpText)
         }
-        //set up on click listener for button to return to fragment main
-        view.findViewById<Button>(R.id.button_return).setOnClickListener {
-            findNavController().navigate(R.id.action_FragmentHelp_To_Main)
-        }
     }
 }

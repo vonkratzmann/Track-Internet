@@ -62,11 +62,6 @@ class FragmentDisplayWifiScan : Fragment() {
         if (MyDebug.DEB_FUN_START) Log.d(tag3, "onViewCreated(): " + getString(R.string.debug_started))
 
         utilsScanWifi.scanWifiNetworks(view)
-
-        //set up on click listener for button to return to FragmentMain
-        view.findViewById<Button>(R.id.button_return).setOnClickListener {
-            findNavController().navigate(R.id.action_Fragment_Wifi_Scan_To_Main)
-        }
     }
 
     /**

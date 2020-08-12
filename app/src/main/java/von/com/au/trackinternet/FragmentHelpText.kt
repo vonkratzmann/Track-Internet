@@ -46,12 +46,7 @@ class FragmentHelpText : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (MyDebug.DEB_FUN_START) Log.d(tag4, "onViewCreated(): " + getString(R.string.debug_started))
 
-     val textView: TextView = view.findViewById(R.id.textView_helptext)
+        val textView: TextView = view.findViewById(R.id.textView_helptext)
         textView.setText("Hello")
-
-        //set up on click listener for button to return to previous fragment
-        view.findViewById<Button>(R.id.button_return).setOnClickListener {
-            findNavController().navigate(R.id.action_FragmentHelpText_To_Main)
-        }
     }
 }

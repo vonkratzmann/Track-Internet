@@ -61,8 +61,6 @@ class FragmentDisplayOutages : Fragment() {
      *
      * get filename from shared preferences
      * display outages
-     * set onClickListener for return to main fragment
-     *
      */
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,11 +73,6 @@ class FragmentDisplayOutages : Fragment() {
         if (DEB_FRAG_OUTAGES) Log.d(tag2, "File name from preferences: $fileName")
 
         displayOutages(fileName!!, view)
-
-        //set up on click listener for button to return to FragmentMain
-        view.findViewById<Button>(R.id.button_return).setOnClickListener {
-            findNavController().navigate(R.id.action_FragmentDisplayOutages_To_Main)
-        }
     }
 
     /**
