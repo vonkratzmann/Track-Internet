@@ -1,7 +1,41 @@
+/**
+ *
+ * Aim is to detect and record wifi and internet outages
+ *
+ * Outages are written to a user specified log file on external storage
+ *
+ * On startup app will terminate if:
+ *  - external storage is not available
+ *  - wifi disabled
+ *  - app will not run unless user allows coarse location permission
+ *
+ * It assumes the wifi internet outages are intermittent
+ * for each outage a date, time, SSID name, and frequency are written to the file
+ * checks file does not exceeded specified number of records in [MyConstants]
+ *
+ * User can start and stop recording
+ * Each time the recording is started, if file exists
+ * user is asked if they want to delete the existing file
+ * It is up to the user to manage the files
+ *
+ * If the file name is changed, the new name will be used the next time a recording is started
+ *
+ * The log file can be emailed to a user
+ *
+ * Notes:
+ *  - The recording runs in a foreground service, on the same thread as the main activity
+ *  - It will only stop when stopped by the user or one of the quit options in the menu
+ *  - The debugging code can be removed from runtime by adjusting the values in MyDebug class to false
+ *  - navigation between the fragments is done using a navigation controller
+ */
 package von.com.au.trackinternet
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -20,73 +54,16 @@ import von.com.au.trackinternet.MyConstants.DELAY_KILL
 import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 
 /**
+ * Main Activity
  *
- * Aim is to detect and record wifi internet outages
- *
- * Outages are written to a user specified log file on external storage
- *
- * On startup app will terminate if:
- *  - external storage is not available
- *  - wifi disabled
- *
- * It assumes the wifi internet outages are intermittent
- * for each outage a date, time, SSID name, and frequency are written to the file
- * checks file does not exceeded specified number of records in MyConstants
- *
- * User can start and stop recording
- * Each time the recording is started, if file exists
- * user is asked if they want to delete the existing file
- * It is up to the user to manage the files
- *
- * If the file name is changed, the new name will be used the next time recording is started
- *
- * The log file can be emailed to a user
- *
- * Notes:
- *  - The recording runs in the foreground, on the same thread as the main activity
- *  - It will only stop when stopped by the user or one of the quit options in the menu
- *  - The debugging code can be removed from runtime by adjusting the values in MyDebug class to false
- *  - needs access coarse location permission
+ * Sets up notification channel required for foreground service in [createNotificationChannel]
+ * inflates menu on the action bar
+ * checks have the coarse location permission which is needed for wifi scan
+ * Inflates menu in teh action bar which provides selections to quit the application and access to the help file
+ * Sets up a navigation controller
+ * FragmentMain is started automatically by the Navigation Component,
+ * as it is flagged as the start destination
  */
-
-/**
- * MainActivity:
- * - sets up notification channel required for foreground service
- * - the class for the notification channel is invoked in the manifest
- * - inflates menu on the action bar
- * -check have the coarse location permission which is need for wifi scan
- * - FragmentMain is started automatically by the Navigation Component,
- * - as it is flagged as the start destination
- *
- * FragmentMain
- * - handles button pushes
- * - if record outages button pressed, calls recordOutages()
- * - does a number of checks,
- * - checks if log file exists, prompts user if they want to delete it
- * - then calls startOurService() in UtilsRecordOutages class
- *
- * - startOurService()
- * - sets up the intent
- * - adds name of log file to intent
- * - calls startService() for the OS to start the service
- *
- * When the service starts,  @override onStart() is called
- * - onStart() sets up the notification
- * - calls startRecordOutages()
- * - starts the service in foreground
- *
- * startRecordOutages()
- * - writes a header record to the log file
- * - sets up the broadcast receiver "gBroadcastReceiver", by a call to setUpWifiChangeBroadcastRec()
- * - registers the receiver by a call to registerWifiChangeRec()
- *
- * gBroadcastReceiver
- * - which will be called when there changes to the internet connection status
- * - writes one line record of changes to internet connectivity status to the log file
- *
- */
-
-
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class MainActivity : AppCompatActivity() {
     private val tag = javaClass.simpleName                   //used for debugging in Logcat
@@ -95,11 +72,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration   //add navigation support to the action bar
 
     /**
-     *  onCreate()
+     *
      *
      *  set up navigation to work with action bar
      *  so title in action bar changes when a fragment is loaded
-     *  instantiate utility classes
+     *  instantiate classes [UtilsGeneral] and [UtilsRecordOutages]
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,12 +108,11 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         if (DEB_FUN_START) Log.d(tag, "onStart(): " + getString(R.string.debug_started))
 
+        createNotificationChannel()
         checkPermAccessLocation()
     }
 
     /**
-     * onCreateOptionsMenu()
-     *
      * inflate menu
      */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -148,11 +124,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * onOptionsItemSelected(item: MenuItem)
+     * Handle action bar (menu) item clicks
      *
-     * Handle action bar (menu) item clicks here. The action bar will
-     * automatically handle clicks on the Home/Up button, so long
-     * as you specify a parent activity in AndroidManifest.xml.
+     * As well as the menu clicks, the action bar will automatically handle clicks on the Home/Up button.
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (DEB_FUN_START) Log.d(tag, "onOptionsItemSelected(): " + getString(R.string.debug_started))
@@ -183,12 +157,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * checkPermAccessLocation()
-     *
      * Check we have permissions to access coarse location
+     *
      * this is required for Wifi Scan
      * without permission the scan will not return any results
-     * ignores tick box do not show this again as app wifi scan will not work without it
+     * ignores "Don't ask again" tick box as app wifi scan will not work without it
+     * App will exit if permission is not allowed
      */
     private fun checkPermAccessLocation() {
         if (DEB_FUN_START) Log.d(tag, "checkPermAccessLocation(): " + getString(R.string.debug_started))
@@ -207,9 +181,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray
-     *
-     * this callback process request from access coarse location
+     * this callback process request for access coarse location permission
      */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (DEB_FUN_START) Log.d(tag, "onRequestPermissionsResult(): " + getString(R.string.debug_started))
@@ -228,12 +200,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * killApp(message: String)
+     *
+     */
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                MyConstants.NOT_CHANNEL_ID,
+                getString(R.string.not_name),
+                NotificationManager.IMPORTANCE_DEFAULT)
+            notificationChannel.description = getString(R.string.not_description_text)
+
+            /* require a notification handler, so register the channel with system
+             * importance or notification behaviours cannot be change after this
+             */
+            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+    /**
+     * kills app but leaves foreground service running
      *
      * Displays app name then the message
      * Delay before killing the app
      * so user can see the message
-     *
      * Note had this in class UtilsGeneral but had issue with getting finish() to work
      * so moved it here
      */

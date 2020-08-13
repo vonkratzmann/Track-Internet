@@ -12,27 +12,27 @@ import androidx.fragment.app.Fragment
 import mysites.com.au.checkinternetconnection.R
 import java.io.InputStream
 
-
 /**
- * Fragment class for help text
+ * Fragment to display app help or operating instructions
+ *
+ * loads a html file stored in [assets] folder
+ * The file provides a short overview and simple instructions on using the app.
+ * Reads the file and loads it directly into scrollable TextView
  */
 class FragmentHelpText : Fragment() {
     private val tag4: String = javaClass.simpleName
 
-    private lateinit var gUtilsGeneral: UtilsGeneral       //used for simple utilities
-
-    /** onCreate()
+    /**
      *
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (MyDebug.DEB_FUN_START) Log.d(tag4, "onCreate(): " + getString(R.string.debug_started))
-
-        gUtilsGeneral = UtilsGeneral(context)
     }
 
     /**
-     * onCreateView()
+     * Inflate layout
+     *
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (MyDebug.DEB_FUN_START) Log.d(tag4, "onCreateView(): " + getString(R.string.debug_started))
@@ -44,7 +44,7 @@ class FragmentHelpText : Fragment() {
     /**
      * Displays a short description of the app and how to use the app
      *
-     * The information is stored in html format in the file: "helptext" stored in the assets directory
+     * The information is stored in an html format in the file: "helptext" stored in the assets directory
      *
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

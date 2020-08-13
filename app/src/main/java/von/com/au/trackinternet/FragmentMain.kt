@@ -27,6 +27,35 @@ import java.io.File
 
 /**
  * Fragment subclass as the default destination in the navigation.
+ *
+ * FragmentMain
+ * - handles button pushes
+ * - if record outages button pressed, calls recordOutages()
+ * - does a number of checks,
+ * - checks if log file exists, prompts user if they want to delete it
+ * - then calls startOurService() in UtilsRecordOutages class
+ *
+ * Flow of program is:
+ *
+ * - startOurService()
+ * - sets up the intent
+ * - adds name of log file to intent
+ * - calls startService() for the OS to start the service
+ *
+ * When the service starts,  @override onStart() is called
+ * - onStart() sets up the notification
+ * - calls startRecordOutages()
+ * - starts the service in foreground
+ *
+ * startRecordOutages()
+ * - writes a header record to the log file
+ * - sets up the broadcast receiver "gBroadcastReceiver", by a call to setUpWifiChangeBroadcastRec()
+ * - registers the receiver by a call to registerWifiChangeRec()
+ *
+ * gBroadcastReceiver
+ * - which will be called when there changes to the internet connection status
+ * - writes one line record of changes to internet connectivity status to the log file
+ *
  */
 class FragmentMain : Fragment() {
     //had to change name to tag1 as compiler had clash with FragmentDisplayOutages tag
@@ -35,7 +64,6 @@ class FragmentMain : Fragment() {
     private lateinit var gScanWifi: UtilsScanWifi               //class for scanning wifi
     private lateinit var gUtilsGeneral: UtilsGeneral            //class for general utilities
     private lateinit var gUtilsRecordOutages: UtilsRecordOutages     //class for recording outages
-
 
     /** onCreate()
      *
