@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Track Internet Help
+    </title>
+</head>
+<body>
+
+<h2>Introduction</h2>
+<p>Track Internet provides a simple application to track and log the state of the device's internet connection</p>
+
+<h2>Requirements</h2>
+<h3>Mandatory Requirements</h3>
+<p>For the application to run:</p>
+<ul>
+    <li>wifi must be enabled</li>
+    <li>SD card inserted</li>
+    <li>Permission to access the device's location</li>
+</ul>
+
+<h3>Other Requirements</h3>
+<p>To allow parts of the app to work other fields have to be populated</p>
+<ul>
+    <li>Too track and record the state of the internet connection a log file name has to be provided</li>
+    <li>Too email the log file an an email address has to be provided.</li>
+</ul>
+
+<h2>Operation</h2>
+<p>Without wifi enabled or an sd card the app will not run and will exit immediately with an
+    error message. On startup for the first time the user is prompted with
+    <i>"Allow <b>Track Internet</b> to access this device's location"
+    </i>
+    If the user selects <i>"DENY"</i>, the app immediately exits. If the app is started again the same prompt will appear, ticking
+    the
+    <i>"Don't ask again"</i>
+    check box is ignored. The app won't run until the <i>"ALLOW"</i> option is selected. Once all the starting requirements are
+    satisfied, the app will present the main screen allowing an email address and a log file name to be entered. The email address
+    and log file name will be remembered ach time the app is restarted.
+</p>
+<h3>Buttons</h3>
+<p>The buttons function as follows:</p>
+<h4>Record Outages</h4>
+<p>Start tracking internet outages and write the results to the log file</p>
+
+<h4>Display Outages</h4>
+<p>Display the contents of the current log file</p>
+
+<h4>ScanWifi</h4>
+<p>Scan for wifi services and display the results</p>
+
+
+</body>
+</html>

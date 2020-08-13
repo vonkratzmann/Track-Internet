@@ -1,15 +1,17 @@
 package von.com.au.trackinternet
 
 import android.os.Bundle
+import android.text.Html
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import mysites.com.au.checkinternetconnection.R
+import java.io.InputStream
+
 
 /**
  * Fragment class for help text
@@ -40,13 +42,28 @@ class FragmentHelpText : Fragment() {
     }
 
     /**
-     * onViewCreated()
+     * Displays a short description of the app and how to use the app
+     *
+     * The information is stored in html format in the file: "helptext" stored in the assets directory
+     *
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (MyDebug.DEB_FUN_START) Log.d(tag4, "onViewCreated(): " + getString(R.string.debug_started))
 
         val textView: TextView = view.findViewById(R.id.textView_helptext)
-        textView.setText("Hello")
+        textView.movementMethod = ScrollingMovementMethod()
+
+        //get the the file containing the help text
+        val inputStream: InputStream = requireContext().assets.open("helptext.html")
+        val buffer = inputStream.bufferedReader().use { it.readText() }
+
+        //setText(Html.fromHtml(bodyData)) is deprecated after api 24
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            textView.text = Html.fromHtml(buffer, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            @Suppress("DEPRECATION")
+            textView.text = Html.fromHtml(buffer)
+        }
     }
 }
