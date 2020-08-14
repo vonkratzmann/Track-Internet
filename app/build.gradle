@@ -14,7 +14,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -29,6 +28,8 @@ android {
         jvmTarget = '1.8'
     }
     apply plugin: "androidx.navigation.safeargs.kotlin"
+
+
 }
 
 dependencies {
