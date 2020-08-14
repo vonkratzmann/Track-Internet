@@ -21,12 +21,7 @@
     <string name="pref_key_email">pref email</string>
 
     <!-- Log file strings -->
-    <string name="log_date_header">Date</string>
-    <string name="log_time_header">Time</string>
-    <string name="log_ssid_header">SSID</string>
     <string name="log_no_wifi_name">SSID.unknown</string>
-    <string name="log_freq_header">Freq</string>
-    <string name="log_status_header">Status</string>
     <string name="log_android_ver_header">Android_Ver</string>
     <string name="log_internet_disconnected">Internet.disconnected</string>
     <string name="log_internet_connected">Internet.connected</string>

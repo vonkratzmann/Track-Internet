@@ -11,8 +11,6 @@ buildscript {
         def nav_version = "2.1.0-alpha06"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
 
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.18"   //added 14/08/2020
-
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

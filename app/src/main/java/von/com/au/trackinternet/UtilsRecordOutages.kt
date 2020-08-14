@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.ConnectivityManager.*
 import android.net.NetworkInfo
 import android.net.NetworkInfo.DetailedState
 import android.net.wifi.WifiInfo
@@ -17,7 +18,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import mysites.com.au.checkinternetconnection.R
-import von.com.au.trackinternet.MyConstants.LOG_HEADER_SPACING
 import von.com.au.trackinternet.MyConstants.MAX_FILE_RECORDS
 import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 import java.io.File
@@ -86,7 +86,6 @@ class UtilsRecordOutages(val mContext: Context?) {
      *  - android version
      *  - date time
      *  - starting message
-     *   - column headings
      *  remove white space from model name so if imported into spreadsheet not spread across multiple columns
      */
     private fun getLogFileHeader(): String {
@@ -99,24 +98,7 @@ class UtilsRecordOutages(val mContext: Context?) {
         val headerMessage = mContext?.getString(R.string.status_start_header)
         val line1 = "$model $androidVerHeader: $androidVer\n"    //title for header
         val line2 = "$dateTime $headerMessage\n"                 //header date and time
-        val line3 = getColumnNames()                     //column names for log file
-        return line1 + line2 + line3
-    }
-
-    /**
-     * getColumnNames()
-     *
-     * generate a string with column names for log file
-     */
-    private fun getColumnNames(): String {
-        if (DEB_FUN_START) Log.d(tag, "getColumnNames(): " + mContext?.getString(R.string.debug_started) + "\n")
-
-        return (mContext?.getString(R.string.log_date_header)?.padEnd(LOG_HEADER_SPACING)
-                + mContext?.getString(R.string.log_time_header)?.padEnd(LOG_HEADER_SPACING)
-                + mContext?.getString(R.string.log_ssid_header)?.padEnd(LOG_HEADER_SPACING)
-                + mContext?.getString(R.string.log_freq_header)?.padEnd(LOG_HEADER_SPACING)
-                + mContext?.getString(R.string.log_status_header)?.padEnd(LOG_HEADER_SPACING)
-                + "\n")
+        return line1 + line2
     }
 
     /**
@@ -151,7 +133,7 @@ class UtilsRecordOutages(val mContext: Context?) {
      * called by startRecordOutages()
      * Set up broadcast receiver for Wifi changes
      * override function onReceive
-     * for each wifi change records:
+     * for each internet change records:
      *  - date/time stamped
      *  - ssid of wifi network connected
      *  - frequency of wifi network
@@ -174,7 +156,7 @@ class UtilsRecordOutages(val mContext: Context?) {
 
                 val status = when (info!!.state) {      //used to store status to be written to log file
 
-                    NetworkInfo.State.CONNECTED -> mContext?.getString(R.string.log_internet_connected)
+                    NetworkInfo.State.CONNECTED -> mContext?.getString(R.string.log_internet_connected) + " " + getTypeOfNetwork()
 
                     NetworkInfo.State.DISCONNECTED -> mContext?.getString(R.string.log_internet_disconnected)
 
@@ -183,8 +165,8 @@ class UtilsRecordOutages(val mContext: Context?) {
                 if (gNetworkLastStatus == status) return                   //no change in status, do nothing
                 gNetworkLastStatus = status
 
-                //write the record
-                gOutputStream.write("${buildLogFileRecord()} $status\n".toByteArray())
+                val record = "${gUtilsGeneral.getDateTime()} $status\n"     //write the record
+                gOutputStream.write(record.toByteArray())
 
                 //check if reached maximum number of records
                 if (gLineCount++ > MAX_FILE_RECORDS) {
@@ -195,6 +177,23 @@ class UtilsRecordOutages(val mContext: Context?) {
                     //todo stop foreground service
                 }
             }
+        }
+    }
+
+    /**
+     * get type of network for current internet connection
+     *
+     * normally wifi or mobile data
+     * for wifi add details
+     */
+    fun getTypeOfNetwork(): String {
+        val cm = mContext!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        return when (activeNetwork?.type) {
+            TYPE_MOBILE -> "via.mobile.data"
+            TYPE_WIFI -> "via.wifi: ${getWifiInformation(true)}"
+            TYPE_BLUETOOTH -> "via.bluetooth"
+            else -> "unknown network"
         }
     }
 
@@ -226,9 +225,11 @@ class UtilsRecordOutages(val mContext: Context?) {
                 }
                 if (gWifiLastStatus == status) return                   //no change in status, do nothing
                 gWifiLastStatus = status
-
+                //set flag to say if wifi is enabled
+                val connected: Boolean = (status == mContext?.getString(R.string.log_wifi_enabled))
                 //write the record
-                gOutputStream.write("${buildLogFileRecord()} $status\n".toByteArray())
+                val record = "${gUtilsGeneral.getDateTime()} $status ${getWifiInformation(connected)}\n"
+                gOutputStream.write(record.toByteArray())
 
                 //check if reached maximum number of records
                 if (gLineCount++ > MAX_FILE_RECORDS) {
@@ -241,17 +242,20 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * buildLogFileRecord()
+     * get wifi SSID name and frequency
      *
-     * gather information to write to log file
+     * if connected give wifi details, else nothing
      */
-    fun buildLogFileRecord(): String {
+    fun getWifiInformation(connected: Boolean): String {
         if (DEB_FUN_START) Log.d(tag, "buildLogFileRecord(): " + mContext?.getString(R.string.debug_started) + "\n")
-
-        val dateTime = gUtilsGeneral.getDateTime()
-        val wifiName = getWifiName() ?: mContext?.getString(R.string.log_no_wifi_name)                //if no wifi set name to "No wifi"
-        val wifiFrequency: Int = getWifiFrequency() ?: 0                //if no wifi, set frequency to zero
-        return "$dateTime $wifiName $wifiFrequency"
+        return when (connected) {
+            true -> {
+                val wifiName = getWifiName() ?: mContext?.getString(R.string.log_no_wifi_name)  //if no wifi set name to "No wifi"
+                val wifiFrequency: Int = getWifiFrequency() ?: 0                                         //if no wifi, set frequency to zero
+                return "$wifiName $wifiFrequency"
+            }
+            false -> ""
+        }
     }
 
     /*
@@ -265,7 +269,7 @@ class UtilsRecordOutages(val mContext: Context?) {
 
         val intentFilter = IntentFilter()
         @Suppress("DEPRECATION")
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        intentFilter.addAction(CONNECTIVITY_ACTION)
         try {
             mContext?.registerReceiver(gNetworkReceiver, intentFilter)
         } catch (e: java.lang.IllegalArgumentException) {
