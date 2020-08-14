@@ -8,10 +8,9 @@ object MyConstants {
     /**
      * maximum number of records that can be written to log file
      * arbitrary choice
-     * limit file size to 1Mb
-     * assumes each record is 100 characters
+     * if you have this many records you have a problem
      */
-    const val MAX_FILE_RECORDS: Int = 10_000
+    const val MAX_FILE_RECORDS: Int = 1000
 
     /**
      * Directory in external storage where log file is stored

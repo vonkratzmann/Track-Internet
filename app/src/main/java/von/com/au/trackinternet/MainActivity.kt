@@ -11,7 +11,7 @@
  *
  * It assumes the wifi internet outages are intermittent
  * for each outage a date, time, SSID name, and frequency are written to the file
- * checks file does not exceeded specified number of records in [MyConstants]
+ * checks file does not exceeded specified number of records in object [MyConstants]()
  *
  * User can start and stop recording
  * Each time the recording is started, if file exists
@@ -24,7 +24,10 @@
  *
  * Notes:
  *  - The recording runs in a foreground service, on the same thread as the main activity
- *  - It will only stop when stopped by the user or one of the quit options in the menu
+ *  - It will only stop by:
+ *    - the stop recording button or
+ *    - the quit option with stop recording or
+ *     - the log file reaches the maximum number of records
  *  - The debugging code can be removed from runtime by adjusting the values in MyDebug class to false
  *  - navigation between the fragments is done using a navigation controller
  */
@@ -56,13 +59,13 @@ import von.com.au.trackinternet.MyDebug.DEB_FUN_START
 /**
  * Main Activity
  *
- * Sets up notification channel required for foreground service in [createNotificationChannel]
+ * Sets up notification channel required for foreground service in [createNotificationChannel]()
  * inflates menu on the action bar
  * checks have the coarse location permission which is needed for wifi scan
- * Inflates menu in teh action bar which provides selections to quit the application and access to the help file
+ * Inflates menu in the action bar which provides selections to quit the application and access to the help file
  * Sets up a navigation controller
  * FragmentMain is started automatically by the Navigation Component,
- * as it is flagged as the start destination
+ * as it is flagged as the start destination  (check this toDo())
  */
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class MainActivity : AppCompatActivity() {

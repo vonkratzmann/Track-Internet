@@ -130,16 +130,14 @@ class UtilsRecordOutages(val mContext: Context?) {
     /**
      * setupNetworkChangeBroadcastRec()
      *
-     * called by startRecordOutages()
+     * called by [startRecordOutages]
      * Set up broadcast receiver for Wifi changes
      * override function onReceive
-     * for each internet change records:
-     *  - date/time stamped
-     *  - ssid of wifi network connected
-     *  - frequency of wifi network
-     *  - internet connectivity status
-     *  if reached max number of records
-     *   - stop recording
+     * for each internet change records if network is connected or disconnected
+     * if internet is connected records type of connection, eg mobile or wifi
+     * if the type of connection is wifi, records
+     * SSID and frequency of wifi network
+     * if reached max number of records stops recording and stops the service
      */
     private fun setupNetworkChangeBroadcastRec() {
         if (DEB_FUN_START) Log.d(tag, "setupNetworkChangeBroadcastRec(): " + mContext?.getString(R.string.debug_started))
@@ -171,10 +169,10 @@ class UtilsRecordOutages(val mContext: Context?) {
                 //check if reached maximum number of records
                 if (gLineCount++ > MAX_FILE_RECORDS) {
                     gOutputStream.write(
-                        "${gUtilsGeneral.getDateTime()} ${mContext?.getString(R.string.error_max_records)} \n"
+                        "${gUtilsGeneral.getDateTime()}  ${mContext?.getString(R.string.error_max_records)} \n"
                             .toByteArray())
                     stopRecordingOutages()
-                    //todo stop foreground service
+                    stopOurService()
                 }
             }
         }
@@ -203,6 +201,8 @@ class UtilsRecordOutages(val mContext: Context?) {
      * Set up broadcast receiver for Wifi changes
      * override function onReceive
      * for each wifi change records an entry in the log file
+     * if wifi is enabled records SSID and frequency
+     * if reached max number of records stops recording and stops the service
      */
     private fun setupWifiChangeBroadcastRec() {
         if (DEB_FUN_START) Log.d(tag, "setupNWifiChangeBroadcastRec(): " + mContext?.getString(R.string.debug_started))
@@ -227,15 +227,15 @@ class UtilsRecordOutages(val mContext: Context?) {
                 gWifiLastStatus = status
                 //set flag to say if wifi is enabled
                 val connected: Boolean = (status == mContext?.getString(R.string.log_wifi_enabled))
-                //write the record
-                val record = "${gUtilsGeneral.getDateTime()} $status ${getWifiInformation(connected)}\n"
+                //write the record, if connected will get SSID and frequency
+                val record = "${gUtilsGeneral.getDateTime()}  $status ${getWifiInformation(connected)}\n"
                 gOutputStream.write(record.toByteArray())
 
                 //check if reached maximum number of records
                 if (gLineCount++ > MAX_FILE_RECORDS) {
                     gOutputStream.write("$dateTime ${mContext?.getString(R.string.error_max_records)} \n".toByteArray())
                     stopRecordingOutages()
-                    //todo stop foreground service
+                    stopOurService()
                 }
             }
         }
@@ -311,8 +311,6 @@ class UtilsRecordOutages(val mContext: Context?) {
         } catch (e: java.lang.IllegalArgumentException) {
             e.printStackTrace()
         }
-
-
     }
 
     /*
@@ -331,7 +329,6 @@ class UtilsRecordOutages(val mContext: Context?) {
             e.printStackTrace()
         }
     }
-
 
     /**
      * getWifiName(context: Context)

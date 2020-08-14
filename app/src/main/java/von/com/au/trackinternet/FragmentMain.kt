@@ -29,33 +29,48 @@ import java.io.File
  * Fragment subclass as the default destination in the navigation.
  *
  * FragmentMain
- * - handles button pushes
- * - if record outages button pressed, calls recordOutages()
+ * handles button pushes, flow of program to start recording is:
+ * - if record outages button pressed, calls [recordOutages]()
+ *
+ * recordOutages()
  * - does a number of checks,
  * - checks if log file exists, prompts user if they want to delete it
- * - then calls startOurService() in UtilsRecordOutages class
+ * - then calls [startOurService]() in UtilsRecordOutages class
  *
- * Flow of program is:
- *
- * - startOurService()
+ * startOurService()
  * - sets up the intent
  * - adds name of log file to intent
  * - calls startService() for the OS to start the service
  *
- * When the service starts,  @override onStart() is called
- * - onStart() sets up the notification
- * - calls startRecordOutages()
+ * When the service is created,  @override [onCreate]() in the service is called
+ * - instantiates a class which has functions to do the recording
+ *
+ * When the service starts,  @override [onStartCommand]() in the service is called
+ * - extracts log file from the intent
+ * - builds a notification
+ * - calls [startRecordOutages]()
  * - starts the service in foreground
  *
  * startRecordOutages()
+ *  sets up global outputStream
  * - writes a header record to the log file
- * - sets up the broadcast receiver "gBroadcastReceiver", by a call to setUpWifiChangeBroadcastRec()
- * - registers the receiver by a call to registerWifiChangeRec()
+ * - sets up the broadcast receiver for wifi changes [gWifiReceiver](), by a call to [setupWifiChangeBroadcastRec]()
+ * - registers the receiver by a call to [registerWifiChangeRec]()
+ * - sets up the broadcast receiver for internet changes [gNetworkReceiver](), by a call to [setupNetworkChangeBroadcastRec]()
+ * - registers the receiver by a call to [registerNetworkChangeRec]()
  *
- * gBroadcastReceiver
- * - which will be called when there changes to the internet connection status
- * - writes one line record of changes to internet connectivity status to the log file
+ * gWifiReceiver
+ * - which will be called when there are changes to the enabled or disabled status of the wifi
+ * - writes one line record of new status to  the log file
+ * - if the wifi is enabled will attach to the record the SSID and frequency
+ * - then checks if the maximum number of records, if so stops recording and stops the service
  *
+ * gNetworkReceiver
+ * - which will be called when there are changes to internet connection status
+ * - writes one line record of new status to  the log file
+ * - if the internet is connected, will attach to the record the type of connection
+ * - if the type of connection is wifi, will attach the SSID and frequency
+ * - then checks if the maximum number of records, if so stops recording and stops the service
  */
 class FragmentMain : Fragment() {
     //had to change name to tag1 as compiler had clash with FragmentDisplayOutages tag

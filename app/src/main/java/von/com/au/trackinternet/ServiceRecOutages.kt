@@ -79,7 +79,7 @@ class ServiceRecOutages : Service() {
     /**
      * Called when service is about to stop
      *
-     * calls [stopRecordingOutages] which
+     * calls [stopRecordingOutages]() which
      * writes a stop header to log file
      * unregisters the broadcast receivers
      * closes log file
