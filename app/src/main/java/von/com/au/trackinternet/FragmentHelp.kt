@@ -11,15 +11,16 @@ import androidx.navigation.fragment.findNavController
 import mysites.com.au.checkinternetconnection.R
 
 /**
- * Fragment class for help
+ * Display a photo which the user has to click on
+ * to get help information from a html formatted file
  */
 class FragmentHelp : Fragment() {
     private val tag3: String = javaClass.simpleName
 
     private lateinit var gUtilsGeneral: UtilsGeneral       //used for simple utilities
 
-    /** onCreate()
-     *
+    /**
+     * Instantiates general helper class
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +30,12 @@ class FragmentHelp : Fragment() {
     }
 
     /**
-     * onCreateView()
+     * Inflates layout for this fragment
+     *
+     * @param inflater layoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState reference to the Bundle object
+     * @return returns the view hierarchy associated with the fragment
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (MyDebug.DEB_FUN_START) Log.d(tag3, "onCreateView(): " + getString(R.string.debug_started))
@@ -39,7 +45,14 @@ class FragmentHelp : Fragment() {
     }
 
     /**
-     * onViewCreated()
+     * Set up an click listener to go help text from photo in layout
+     *
+     * Once pictured clicked, calls findNavController() to navigate to [FragmentHelpText]()
+     * to display the help text
+     *
+     * [displayOutages]() does all the work
+     * @param view view where to display the results
+     * @param savedInstanceState reference to the Bundle object
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -13,7 +13,7 @@ import mysites.com.au.checkinternetconnection.R
 import java.io.InputStream
 
 /**
- * Fragment to display app help or operating instructions
+ * Displays help text which covers overview of the app and operating instructions
  *
  * loads a html file stored in [assets] folder
  * The file provides a short overview and simple instructions on using the app.
@@ -23,16 +23,12 @@ class FragmentHelpText : Fragment() {
     private val tag4: String = javaClass.simpleName
 
     /**
+     * Inflates layout for this fragment
      *
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (MyDebug.DEB_FUN_START) Log.d(tag4, "onCreate(): " + getString(R.string.debug_started))
-    }
-
-    /**
-     * Inflate layout
-     *
+     * @param inflater layoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState reference to the Bundle object
+     * @return returns the view hierarchy associated with the fragment
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (MyDebug.DEB_FUN_START) Log.d(tag4, "onCreateView(): " + getString(R.string.debug_started))
@@ -42,10 +38,10 @@ class FragmentHelpText : Fragment() {
     }
 
     /**
-     * Displays a short description of the app and how to use the app
+     * Displays help text into a TextView
      *
-     * The information is stored in an html format in the file: "helptext" stored in the assets directory
-     *
+     * @param view view where to display the help text
+     * @param savedInstanceState reference to the Bundle object
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

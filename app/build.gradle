@@ -28,8 +28,13 @@ android {
         jvmTarget = '1.8'
     }
     apply plugin: "androidx.navigation.safeargs.kotlin"
-
-
+    apply plugin: 'org.jetbrains.dokka'     //kk added 15/08/2020
+    //kk added 15/8/2020 >
+    dokka {
+        outputFormat = 'html' // use 'javadoc' to get standard java docs
+        outputDirectory = "$buildDir/javadoc"
+    }
+//kk added 15/8/2020 <
 }
 
 dependencies {
@@ -44,5 +49,4 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
 }

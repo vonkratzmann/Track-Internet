@@ -16,7 +16,7 @@ import java.io.IOException
 import java.util.*
 
 /**
- * Fragment subclass to display a logs of the outages
+ * Displays log file records of outages on device
  */
 class FragmentDisplayOutages : Fragment() {
     //had to change name to tag2 as compiler had clash with FragmentMain tag
@@ -24,11 +24,11 @@ class FragmentDisplayOutages : Fragment() {
     private lateinit var utilsGeneral: UtilsGeneral  //hold general functions to handle files and other things
     private lateinit var sharedPref: SharedPreferences
 
-    /** onCreate()
+    /**
+     * Sets up default shared preference file and instantiates other helper classes
      *
-     * sets up default shared preference file
-     *  - used to pass file name and operations request to class FragmentDisplayOutages
-     *  instantiate classes
+     * shared preferences used to get log file f filename
+     * @param savedInstanceState reference to the Bundle object
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +40,13 @@ class FragmentDisplayOutages : Fragment() {
     }
 
     /**
-     * onCreateView()
+     * Inflates layout for this fragment
      *
+     * @param inflater layoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState reference to the Bundle object
+     * @return returns the view hierarchy associated with the fragment
      */
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,15 +58,14 @@ class FragmentDisplayOutages : Fragment() {
     }
 
     /**
-     * onViewCreated()
+     * Get filename from shared preferences, calls [displayOutages]() to display outages
      *
-     * get filename from shared preferences
-     * display outages
+     * [displayOutages]() does all the work
+     * @param view view where to display the results
+     * @param savedInstanceState reference to the Bundle object
      */
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         if (MyDebug.DEB_FUN_START) Log.d(tag2, "onViewCreated(): " + getString(R.string.debug_started))
 
         val defaultValue = resources.getString(R.string.pref_key_log_file_default)
@@ -74,14 +76,18 @@ class FragmentDisplayOutages : Fragment() {
     }
 
     /**
-     * displayOutages(fileName: String?, view: View)
+     * displayOutages on the screen
      *
-     * gets file name, path
-     * assumes validity of file name checked by main fragment
-     * display the file in the listView
+     * gets file path for log file
+     * assumes validity of file name checked by caller
+     * read the entire the file and passes to listView arrayAdapter
+     * As the file size is limited, no consideration given to buffering the file read
+     * @param fileName name of log filename from shared preferences
+     * @param view view from [onViewCreated]() used to find listView
      */
     private fun displayOutages(fileName: String, view: View) {
         if (MyDebug.DEB_FUN_START) Log.d(tag2, "displayOutages: " + getString(R.string.debug_started))
+
         val listView: ListView = view.findViewById(R.id.listview)
 
         try {
@@ -101,15 +107,5 @@ class FragmentDisplayOutages : Fragment() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-    }
-
-    /**
-     * onStart()
-     *
-     *
-     */
-    override fun onStart() {
-        super.onStart()
-        if (MyDebug.DEB_FUN_START) Log.d(tag2, "onStart(): " + getString(R.string.debug_started))
     }
 }
