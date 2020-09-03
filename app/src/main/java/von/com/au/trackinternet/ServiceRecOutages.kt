@@ -14,7 +14,7 @@ import java.io.File
  *
  * Once started runs independently of the app
  * Records changes in wifi connection status in a log file
- * Records changes to the internet connectivity to the sme log file
+ * Records changes to the internet connectivity to the same log file
  * Uses two broadcast receivers to detect changes to wifi and internet
  * Majority of the code is in the class [UtilsRecordOutages]
  */
@@ -25,8 +25,8 @@ class ServiceRecOutages : Service() {
 
     private lateinit var utilsRecOut: UtilsRecordOutages
 
-    /*
-     * called first time service is created
+    /**
+     * Called first time service is created
      *
     * instantiate class [UtilsRecordOutages] to record outages
     */
@@ -79,7 +79,7 @@ class ServiceRecOutages : Service() {
     /**
      * Called when service is about to stop
      *
-     * calls [stopRecordingOutages]() which
+     * calls [UtilsRecordOutages.stopRecordingOutages]] which
      * writes a stop header to log file
      * unregisters the broadcast receivers
      * closes log file

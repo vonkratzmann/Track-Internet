@@ -25,7 +25,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 /**
- * Class for recording internet outages on wifi
+ * Class for recording internet outages
  * number of utility functions
  */
 
@@ -44,18 +44,17 @@ class UtilsRecordOutages(val mContext: Context?) {
     private var gWifiLastStatus: String? = mContext?.getString(R.string.log_wifi_status_unknown)
 
     /**
-     * startRecordOutages(mFilename: String)
+     * Start recording outages in the foreground service
      *
      * Called by onStartCommand() in the foreground service
      * Assumes file accessibility has been checked before this call
      * open IO stream for log file in append mode
      * write header to log file
-     * set up broadcast receiver
-     * register listener to process incoming data
+     * set up broadcast receivers for wifi and network changes
+     * register listeners to process incoming data
      * return boolean success/failure
      * Initialise global variables for other functions to use
-     *
-     * See [MyConstants] for width of columns and layout
+     * @parameter file - file to use for logging
      */
     fun startRecordOutages(file: File): Boolean {
         if (DEB_FUN_START) Log.d(tag, "startRecordOutages: " + mContext?.getString(R.string.debug_started) + "\n")
@@ -80,31 +79,34 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * getLogFileHeader()
+     * Generate header for log file
+     *
      * Header contains
      *  - phone model
      *  - android version
      *  - date time
      *  - starting message
-     *  remove white space from model name so if imported into spreadsheet not spread across multiple columns
+     *  remove white space from model name
+     *  so if imported into spreadsheet not spread across multiple columns if use space for delimiter
+     *  @return logfile header
      */
     private fun getLogFileHeader(): String {
         if (DEB_FUN_START) Log.d(tag, "getLogFileHeader(): " + mContext?.getString(R.string.debug_started) + "\n")
 
         val dateTime = gUtilsGeneral.getDateTime()
         val model: String = (Build.MODEL).replace(regex = "\\s".toRegex(), replacement = "")
-        val androidVerHeader = mContext?.getString(R.string.log_android_ver_header)
+        val androidVerHeader = mContext?.getString(R.string.log_android_ver_header) ?: ""
         val androidVer: String = Build.VERSION.RELEASE
-        val headerMessage = mContext?.getString(R.string.status_start_header)
+        val headerMessage = mContext?.getString(R.string.status_start_header) ?: ""
         val line1 = "$model $androidVerHeader: $androidVer\n"    //title for header
         val line2 = "$dateTime $headerMessage\n"                 //header date and time
         return line1 + line2
     }
 
     /**
-     * stopRecordingOutages()
+     * Stop recording outages
      *
-     * Called by BroadCastRec() if reached maximum number of records or
+     * Called by BroadcastRec() if reached maximum number of records or
      * Called by onDestroy() in foreground service or
      * called by onOptionsItemSelected()in main activity
      * when a menu item is selected to quit the app and stop recording
@@ -128,11 +130,10 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * setupNetworkChangeBroadcastRec()
+     * Setup network change broadcast receiver
      *
      * called by [startRecordOutages]
-     * Set up broadcast receiver for Wifi changes
-     * override function onReceive
+     * implemented in override function onReceive
      * for each internet change records if network is connected or disconnected
      * if internet is connected records type of connection, eg mobile or wifi
      * if the type of connection is wifi, records
@@ -149,10 +150,11 @@ class UtilsRecordOutages(val mContext: Context?) {
             override fun onReceive(c: Context, intent: Intent) {
                 if (DEB_FUN_START) Log.d(tag, "NetworkBroadcastReceiver(): " + mContext?.getString(R.string.debug_started))
 
-                val extras: Bundle? = intent.extras     //get network information to write to log file
-                val info = extras?.getParcelable<Parcelable>("networkInfo") as NetworkInfo?
-
-                val status = when (info!!.state) {      //used to store status to be written to log file
+                val extras: Bundle = intent.extras ?: return     //get network information to write to log file
+                //if nothing there, no point proceeding
+                val info = extras.getParcelable<Parcelable>("networkInfo") as NetworkInfo? ?: return
+                //if nothing there, no point proceeding
+                val status = when (info.state) {      //used to store status to be written to log file
 
                     NetworkInfo.State.CONNECTED -> mContext?.getString(R.string.log_internet_connected) + " " + getTypeOfNetwork()
 
@@ -164,42 +166,47 @@ class UtilsRecordOutages(val mContext: Context?) {
                 gNetworkLastStatus = status
 
                 val record = "${gUtilsGeneral.getDateTime()} $status\n"     //write the record
-                gOutputStream.write(record.toByteArray())
-
-                //check if reached maximum number of records
-                if (gLineCount++ > MAX_FILE_RECORDS) {
-                    gOutputStream.write(
-                        "${gUtilsGeneral.getDateTime()}  ${mContext?.getString(R.string.error_max_records)} \n"
-                            .toByteArray())
-                    stopRecordingOutages()
-                    stopOurService()
+                try {
+                    gOutputStream.write(record.toByteArray())
+                    //check if reached maximum number of records
+                    if (gLineCount++ > MAX_FILE_RECORDS) {
+                        gOutputStream.write(
+                            "${gUtilsGeneral.getDateTime()}  ${mContext?.getString(R.string.error_max_records)} \n"
+                                .toByteArray())
+                    }
+                } catch (e: IOException) {
+                    Log.w(tag, "Error writing to file $e")
                 }
+                stopRecordingOutages()
+                stopOurService()
             }
         }
     }
 
     /**
-     * get type of network for current internet connection
+     * Get type of network for current internet connection
      *
      * normally wifi or mobile data
      * for wifi add details
+     * @return string with type of network and wifi details if network type is wifi
      */
     fun getTypeOfNetwork(): String {
         val cm = mContext!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return when (activeNetwork?.type) {
-            TYPE_MOBILE -> "via.mobile.data"
-            TYPE_WIFI -> "via.wifi: ${getWifiInformation(true)}"
-            TYPE_BLUETOOTH -> "via.bluetooth"
-            else -> "unknown network"
+        val activeNetwork: NetworkInfo = cm.activeNetworkInfo ?: return mContext.getString(R.string.unknown_network)
+
+        return when (activeNetwork.type) {
+            TYPE_MOBILE -> mContext.getString(R.string.via_mobile_data)
+            TYPE_WIFI -> "${mContext.getString(R.string.via_wifi)}: ${getWifiInformation(true)}"
+            TYPE_BLUETOOTH -> mContext.getString(R.string.via_bluetooth)
+            else -> mContext.getString(R.string.unknown_network)
         }
     }
 
     /**
-     * setupWifiChangeBroadcastRec()
+     * Setup a Wifi change broadcast receiver
      *
-     * Set up broadcast receiver for Wifi changes
-     * override function onReceive
+     * called by [startRecordOutages]
+     * implemented in override function onReceive
      * for each wifi change records an entry in the log file
      * if wifi is enabled records SSID and frequency
      * if reached max number of records stops recording and stops the service
@@ -215,54 +222,62 @@ class UtilsRecordOutages(val mContext: Context?) {
 
                 val dateTime = gUtilsGeneral.getDateTime()
                 //EXTRA_WIFI_STATE is the lookup key for whether Wi-Fi is enabled, disabled, enabling, disabling, or unknown.
-                val status: String? = when (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN)) {
+                val status: String = when (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN)) {
 
-                    WifiManager.WIFI_STATE_DISABLED -> mContext?.getString(R.string.log_wifi_disabled)
+                    WifiManager.WIFI_STATE_DISABLED -> mContext!!.getString(R.string.log_wifi_disabled)
 
-                    WifiManager.WIFI_STATE_ENABLED -> mContext?.getString(R.string.log_wifi_enabled)
+                    WifiManager.WIFI_STATE_ENABLED -> mContext!!.getString(R.string.log_wifi_enabled)
 
-                    else -> mContext?.getString(R.string.log_wifi_status_unknown)
+                    else -> mContext!!.getString(R.string.log_wifi_status_unknown)
                 }
                 if (gWifiLastStatus == status) return                   //no change in status, do nothing
                 gWifiLastStatus = status
                 //set flag to say if wifi is enabled
-                val connected: Boolean = (status == mContext?.getString(R.string.log_wifi_enabled))
+                val connected: Boolean = (status == mContext.getString(R.string.log_wifi_enabled))
                 //write the record, if connected will get SSID and frequency
                 val record = "${gUtilsGeneral.getDateTime()}  $status ${getWifiInformation(connected)}\n"
                 gOutputStream.write(record.toByteArray())
 
                 //check if reached maximum number of records
                 if (gLineCount++ > MAX_FILE_RECORDS) {
-                    gOutputStream.write("$dateTime ${mContext?.getString(R.string.error_max_records)} \n".toByteArray())
-                    stopRecordingOutages()
-                    stopOurService()
+                    try {
+                        gOutputStream.write("$dateTime ${mContext.getString(R.string.error_max_records)} \n".toByteArray())
+                        stopRecordingOutages()
+                        stopOurService()
+                    } catch (e: IOException) {
+                        Log.w(tag, "Error writing to file $e")
+                    }
                 }
             }
         }
     }
 
     /**
-     * get wifi SSID name and frequency
+     * get wifi SSID name and frequency for log file
      *
-     * if connected give wifi details, else nothing
+     * if connected get wifi ssid name and frequency
+     * if not connected return ""
+     * if ssid name not available return ""
+     * if frequency not available return frequency of 0
+     * @return ssid name and frequency as a string
      */
     fun getWifiInformation(connected: Boolean): String {
         if (DEB_FUN_START) Log.d(tag, "buildLogFileRecord(): " + mContext?.getString(R.string.debug_started) + "\n")
+
         return when (connected) {
             true -> {
-                val wifiName = getWifiName() ?: mContext?.getString(R.string.log_no_wifi_name)  //if no wifi set name to "No wifi"
+                val wifiName = getWifiName() ?: mContext!!.getString(R.string.log_no_wifi_name)  //if no wifi set name to "No wifi"
                 val wifiFrequency: Int = getWifiFrequency() ?: 0                                         //if no wifi, set frequency to zero
-                return "$wifiName $wifiFrequency"
+                return "$wifiName Freq(MHz): $wifiFrequency"
             }
             false -> ""
         }
     }
 
-    /*
-     * registerNetworkChangeRec()
+    /**
+     * Register a broadcast receiver for any network connectivity changes
      *
-     * called by startRecordOutages
-     * Register a broadcast receiver for any Wifi network changes
+     * called by [startRecordOutages]
      */
     private fun registerNetworkChangeRec() {
         if (DEB_FUN_START) Log.d(tag, "registerNetworkChangeRec(): " + mContext?.getString(R.string.debug_started))
@@ -277,11 +292,10 @@ class UtilsRecordOutages(val mContext: Context?) {
         }
     }
 
-    /*
-     * unRegisterNetworkChangeRec()
+    /**
+     * Un-register a network change receiver
      *
-     * called by stopRecordingOutages()
-     * unregister a broadcast receiver for any Wifi network changes
+     * called by [stopRecordingOutages]
      */
 
     private fun unRegisterNetworkChangeRec() {
@@ -294,11 +308,11 @@ class UtilsRecordOutages(val mContext: Context?) {
         }
     }
 
-    /*
-       * registerWifiChangeRec()
-       *
-       * Register a broadcast receiver for any Wifi network changes
-       */
+    /**
+     * Register a broadcast receiver for any Wifi network changes
+     *
+     * called by [startRecordOutages]
+     */
     @Suppress("DEPRECATION")
     private fun registerWifiChangeRec() {
         if (DEB_FUN_START) Log.d(tag, "registerWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
@@ -313,10 +327,10 @@ class UtilsRecordOutages(val mContext: Context?) {
         }
     }
 
-    /*
-     * unRegisterWifiChangeRec()
+    /**
+     * Unregister a broadcast receiver for any Wifi network changes
      *
-     * unregister a broadcast receiver for any Wifi network changes
+     *  called by [stopRecordingOutages]
      */
     private fun unRegisterWifiChangeRec() {
         if (DEB_FUN_START) Log.d(
@@ -331,9 +345,10 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * getWifiName(context: Context)
+     * Get SSID for current connected wifi,
+     * if unable to get SSID returns null
      *
-     * get SSID for current connected wifi
+     * @return SSID
      */
     @SuppressLint("WifiManagerPotentialLeak")
     @Suppress("DEPRECATION")
@@ -355,16 +370,15 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * getWifiFrequency(context: Context)
+     * Get frequency for current connected wifi,
+     * if unable to get frequency returns null.
      *
-     * get frequency for current connected wifi
+     * @return frequency or null
      */
     @SuppressLint("WifiManagerPotentialLeak")
     @Suppress("DEPRECATION")
     private fun getWifiFrequency(): Int? {
-        if (DEB_FUN_START) Log.d(
-            tag,
-            "getFrequency(): " + mContext?.getString(R.string.debug_started))
+        if (DEB_FUN_START) Log.d(tag, "getFrequency(): " + mContext?.getString(R.string.debug_started))
 
         //use getApplicationContext as WifiService will memory leak
         val manager = mContext?.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -381,8 +395,7 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * stopService()
-     *
+     * Stop foreground service
      */
     fun stopOurService() {
         if (DEB_FUN_START) Log.d(tag, "stopOurService(): " + mContext?.getString(R.string.debug_started))
@@ -392,10 +405,10 @@ class UtilsRecordOutages(val mContext: Context?) {
     }
 
     /**
-     * startOurService(file: File)
+     * Starts service to record outages
      *
-     * starts service to record outages and
      * passes name of log file to record outages
+     * @param file file to be used for logging
      */
     fun startOurService(file: File) {
         if (DEB_FUN_START) Log.d(tag, "startOurService(): " + mContext?.getString(R.string.debug_started))

@@ -29,6 +29,11 @@
     <string name="log_wifi_enabled">Wifi.enabled</string>
     <string name="log_wifi_disabled">Wifi.disabled</string>
     <string name="log_wifi_status_unknown">Unknown</string>
+    <string name="unknown_network">unknown.network</string>
+    <string name="via_mobile_data">via.mobile.data</string>
+    <string name="via_wifi">via.wifi</string>
+    <string name="via_bluetooth">via.bluetooth</string>
+
 
     <!-- Notification Channel for foreground service -->
     <string name="not_name">Check internet</string>
