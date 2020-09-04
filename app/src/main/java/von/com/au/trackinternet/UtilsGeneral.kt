@@ -31,7 +31,7 @@ class UtilsGeneral(private val mContext: Context?) {
     private val tag = javaClass.simpleName          //used for debugging in Logcat
 
     /**
-     * checkExtStorageForRW()
+     * Check external storage for read and write
      *
      * check external storage available for Read/Write
      * @return true if storage accessible
@@ -47,10 +47,11 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
-     * getFileName(view: View)
+     * Get file name
      *
-     * get file name form edit text
-     *@return fileName type String
+     * get file name from EditText
+     * @param view where edit text is displayed
+     * @return fileName type String
      */
     fun getFileName(view: View): String {
         if (DEB_FUN_START) Log.d(tag, "getFileName): " + mContext?.getString(R.string.debug_started))
@@ -59,7 +60,7 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
-     * getFilePath()
+     * Get absolute file path to directory on external storage
      *
      * get absolute path to directory on shared external storage
      * @return path as type String
@@ -73,8 +74,10 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
-     * getFilePathName(mFileName: String)
+     * Get type File representation of the file and directory path names
      *
+     * Use the filename provided and then get the external directory
+     * @param mFileName file to get path to
      * @return file path and name as type File
      */
     fun getFilePathName(mFileName: String): File {
@@ -86,8 +89,12 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
-     * getFilePathName(view: View)
+     *  Get type File representation of the file and directory path names
      *
+     * Use the view provided to get the name of the entered file
+     * and then get the external directory
+     *
+     * @param view where file name has been entered
      * @return file path and name as type File
      */
     fun getFilePathName(view: View): File {
@@ -100,10 +107,11 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
-     * checkFileAccessible(fileName: String)
+     * Check can access the file
      *
      * Check if accessible by creating a new file
      * if accessible return true, else false
+     * @param mFileName file to check if accessible
      * @return true or false
      */
     fun checkFileAccessible(mFileName: String): Boolean {
@@ -122,11 +130,10 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
-     * getDateTime()
+     * Get date and time in format defined in this function
      *
      * todo() make formats the same
-     * return in format "yyyy MM dd HH:mm:ss
-     *
+     * @return in format "yyyy MM dd HH:mm:ss
      */
     fun getDateTime(): String {
         if (DEB_FUN_START) Log.d(
@@ -148,12 +155,14 @@ class UtilsGeneral(private val mContext: Context?) {
     }
 
     /**
+     * Set image in help view
      *
+     * Use image in the path specified in this function
+     * @param view to display the image
      */
     fun help(view: View) {
         val imageView: ImageView = view.findViewById(R.id.imageView_help)
         val bitMap: Bitmap = BitmapFactory.decodeFile("boys")
         imageView.setImageBitmap(bitMap)
-
     }
 }

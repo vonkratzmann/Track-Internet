@@ -152,8 +152,8 @@ class UtilsRecordOutages(val mContext: Context?) {
 
                 val extras: Bundle = intent.extras ?: return     //get network information to write to log file
                 //if nothing there, no point proceeding
-                val info = extras.getParcelable<Parcelable>("networkInfo") as NetworkInfo? ?: return
-                //if nothing there, no point proceeding
+                val info = extras.getParcelable<Parcelable>("networkInfo") as NetworkInfo? ?: return //if nothing there, no point proceeding
+
                 val status = when (info.state) {      //used to store status to be written to log file
 
                     NetworkInfo.State.CONNECTED -> mContext?.getString(R.string.log_internet_connected) + " " + getTypeOfNetwork()
@@ -171,14 +171,13 @@ class UtilsRecordOutages(val mContext: Context?) {
                     //check if reached maximum number of records
                     if (gLineCount++ > MAX_FILE_RECORDS) {
                         gOutputStream.write(
-                            "${gUtilsGeneral.getDateTime()}  ${mContext?.getString(R.string.error_max_records)} \n"
-                                .toByteArray())
+                            "${gUtilsGeneral.getDateTime()}  ${mContext?.getString(R.string.error_max_records)} \n".toByteArray())   //yes write message to log file
+                        stopRecordingOutages()
+                        stopOurService()
                     }
                 } catch (e: IOException) {
                     Log.w(tag, "Error writing to file $e")
                 }
-                stopRecordingOutages()
-                stopOurService()
             }
         }
     }
@@ -241,7 +240,7 @@ class UtilsRecordOutages(val mContext: Context?) {
                 //check if reached maximum number of records
                 if (gLineCount++ > MAX_FILE_RECORDS) {
                     try {
-                        gOutputStream.write("$dateTime ${mContext.getString(R.string.error_max_records)} \n".toByteArray())
+                        gOutputStream.write("$dateTime ${mContext.getString(R.string.error_max_records)} \n".toByteArray())  //yes write message to log file
                         stopRecordingOutages()
                         stopOurService()
                     } catch (e: IOException) {

@@ -194,6 +194,7 @@ class FragmentMain : Fragment() {
 
     /**
      * onPause()
+     *
      * do not unregister broadcast receivers here as they are used by foreground service
      * In foreground service onDestroy() calls stopRecording()
      * which unregisters the broadcast receivers
@@ -231,6 +232,7 @@ class FragmentMain : Fragment() {
 
     /**
      * recordOutages()
+     *
      * get filename from view
      * check a name has been entered,
      *   if not message user and return
@@ -312,7 +314,7 @@ class FragmentMain : Fragment() {
      * check a name has been entered,
      *   if not message user and return
      * check we can create the file from path and filename
-     * *   if not message user and return
+     *    if not message user and return
      * pass file name to shared preferences
      *   to be used by next fragment
      * navigate to FragmentDisplayOutages to process the request
