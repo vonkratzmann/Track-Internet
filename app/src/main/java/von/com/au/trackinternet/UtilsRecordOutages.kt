@@ -332,9 +332,8 @@ class UtilsRecordOutages(val mContext: Context?) {
      *  called by [stopRecordingOutages]
      */
     private fun unRegisterWifiChangeRec() {
-        if (DEB_FUN_START) Log.d(
-            tag,
-            "unregisterWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
+        if (DEB_FUN_START) Log.d(tag, "unregisterWifiChangeRec(): " + mContext?.getString(R.string.debug_started))
+
         try {
             //unregisterReceiver belongs to the Activity class, in fragment have to add requireActivity()
             mContext?.unregisterReceiver(gNetworkReceiver)

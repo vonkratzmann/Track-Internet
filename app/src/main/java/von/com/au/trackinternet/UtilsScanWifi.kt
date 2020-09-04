@@ -28,7 +28,7 @@ class UtilsScanWifi(val mContext: Context?) {
     private lateinit var gListView: ListView
 
     /**
-     * scanWifiNetworks()
+     * Scan Wifi Networks
      *
      * clear ArrayList ready for new results
      * setup wifi manager
@@ -39,6 +39,7 @@ class UtilsScanWifi(val mContext: Context?) {
      * if scan successful, [mWiFiScanReceiver()] uses the callback method [onReceive()]  to retrieve the results
      * [onReceive()] needs to unregister the listener on successful scan
      * if scan unsuccessful, unregister listener, call scanFailure()
+     * @param view where to display the results
      *@return status of scan
      */
     @Suppress("DEPRECATION")
@@ -68,7 +69,7 @@ class UtilsScanWifi(val mContext: Context?) {
     }
 
     /**
-     * setUpWifiScanBroadcastRec()
+     * Setup a wifi scan broadcast receiver
      *
      * Set up broadcast receiver for WifiScan
      * check for success or failure and
@@ -93,7 +94,7 @@ class UtilsScanWifi(val mContext: Context?) {
     }
 
     /**
-     * scanSuccess()
+     * Process scan success
      *
      * Tell user successful
      * get results & put into array
@@ -130,17 +131,18 @@ class UtilsScanWifi(val mContext: Context?) {
     }
 
     /**
-     * scanFailure()
+     * Process scan failure
      *
      * Tell user unsuccessful
      */
     fun scanFailure() {
         if (MyDebug.DEB_FUN_START) Log.d(tag, "scanFailure(): " + mContext?.getString(R.string.debug_started))
+
         Toast.makeText(mContext, "Scan Failure", Toast.LENGTH_SHORT).show()
     }
 
     /**
-     * registerWifiScanRec()
+     * Register a wifi scan receiver
      *
      * Set up intent for scan and then register receive
      */
@@ -150,12 +152,11 @@ class UtilsScanWifi(val mContext: Context?) {
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
 
-        // mContext?.registerReceiver(wiFiScanReceiver, intentFilter)
         mContext?.registerReceiver(wiFiScanReceiver, intentFilter)
     }
 
     /**
-     * unregisterWifiScanRec()
+     * Unregister a wifi scan receiver
      *
      * Unregister receiver
      */
