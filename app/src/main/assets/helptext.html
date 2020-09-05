@@ -23,7 +23,7 @@
 <p>To allow parts of the app to work other fields have to be populated</p>
 <ul>
     <li>Too track and record the state of the internet connection a log file name has to be provided</li>
-    <li>Too email the log file an an email address has to be provided.</li>
+    <li>Too email the log file an email address has to be provided.</li>
 </ul>
 
 <h2>Operation</h2>
@@ -41,21 +41,31 @@
 </p>
 
 <h3>Running</h3>
-<p> Once running by tapping a button the app will:
+<p>Once running, by tapping the appropriate button the app will:</p>
 <ul>
-    <li>display outages which have been recorded in the log file</li>
     <li>record outages in the log file</li>
     <li>stop recording outages in the log file</li>
+    <li>display outages which have been recorded in the log file</li>
     <li>email the log file to the entered email address</li>
+    <li>scan for and display wifi networks</li>
 </ul>
-<p>Via the three dots at the top that can be made to:</p>
+
+<h3>Recording</h3>
+<p>When record outages is selected, the app prompts if the existing log file is to be deleted or not.
+    Each time the recording of outages is stopped or started a message is written to the log file.
+    When recording is started, the model of the device and the android software version is also written to the log file.
+    The app records changes to the internet connection by writing the date/time and the state of the internet connection to the log file.
+    For the state of the connection, the app writes <i>"internet connected"</i> or <i>"internet disconnected"</i>. If the state changes to
+    <i>"connected"</i>, the app writes the type of network connection, typically wifi or mobile data. In the case of a wifi connection,
+    the app also records the SSID (wifi network name) and the frequency of the wifi network.
+</p>
+
+<h3>Menu</h3>
+<p>Via the three dots at the top right hand side of the display that can be made to:</p>
 <ul>
     <li>stop recording and quit</li>
     <li>keep recording and quit</li>
     <li>get help, display this information</li>
 </ul>
-
-<h2>Observations</h2>
-<p></p>
 </body>
 </html>
